@@ -1,16 +1,52 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useGuest } from '@/contexts/GuestContext';
+import { LandingPage } from './LandingPage';
+import { AuthModal } from '@/components/dashboard/AuthModal';
+import { useState } from 'react';
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
-  return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
-  );
+const Index = () => {
+  const { loading, user } = useAuth();
+  const { isGuestMode, enterGuestMode } = useGuest();
+  const navigate = useNavigate();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Redirect based on auth status
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        navigate('/home', { replace: true });
+      } else if (isGuestMode) {
+        navigate('/bus', { replace: true });
+      }
+    }
+  }, [loading, user, isGuestMode, navigate]);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-primary text-xl font-semibold">Loading...</div>
+      </div>
+    );
+  }
+
+  // Show landing page for unauthenticated visitors
+  if (!user && !isGuestMode) {
+    return (
+      <div className="min-h-screen bg-background">
+        <LandingPage 
+          onLoginClick={() => setShowAuthModal(true)} 
+          onGuestViewClick={enterGuestMode}
+        />
+        <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />
+      </div>
+    );
+  }
+
+  // This shouldn't render as we redirect above, but just in case
+  return null;
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;

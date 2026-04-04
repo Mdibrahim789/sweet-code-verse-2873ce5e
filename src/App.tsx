@@ -1,26 +1,73 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { GuestProvider } from "@/contexts/GuestContext";
+
+// Pages
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import ResetPassword from "./pages/ResetPassword";
+
+// Dashboard Layout and Sections
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { HomeSection } from "@/components/dashboard/HomeSection";
+import { AcademicSection } from "@/components/dashboard/AcademicSection";
+import { StudentsSection } from "@/components/dashboard/StudentsSection";
+import { FacultySection } from "@/components/dashboard/FacultySection";
+import { NoticesSection } from "@/components/dashboard/NoticesSection";
+import { AttendanceSection } from "@/components/dashboard/AttendanceSection";
+import { PollsSection } from "@/components/dashboard/PollsSection";
+import { GallerySection } from "@/components/dashboard/GallerySection";
+import { BusSection } from "@/components/dashboard/BusSection";
+import { AboutSection } from "@/components/dashboard/AboutSection";
+import { AdminSection } from "@/components/dashboard/AdminSection";
+import { ProfileSection } from "@/components/dashboard/ProfileSection";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider defaultTheme="light" attribute="class" enableSystem>
+      <AuthProvider>
+        <GuestProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                {/* Landing page / entry point */}
+                <Route path="/" element={<Index />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+
+                {/* Dashboard routes with shared layout */}
+                <Route path="/dashboard" element={<DashboardLayout />}>
+                  <Route index element={<Navigate to="home" replace />} />
+                  <Route path="home" element={<HomeSection />} />
+                  <Route path="academic" element={<AcademicSection />} />
+                  <Route path="students" element={<StudentsSection />} />
+                  <Route path="faculty" element={<FacultySection />} />
+                  <Route path="notices" element={<NoticesSection />} />
+                  <Route path="attendance" element={<AttendanceSection />} />
+                  <Route path="polls" element={<PollsSection />} />
+                  <Route path="gallery" element={<GallerySection />} />
+                  <Route path="bus" element={<BusSection />} />
+                  <Route path="about" element={<AboutSection />} />
+                  <Route path="admin" element={<AdminSection />} />
+                  <Route path="profile" element={<ProfileSection />} />
+                </Route>
+
+                {/* 404 */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </GuestProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
