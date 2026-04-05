@@ -32,7 +32,6 @@ export const DashboardLayout = () => {
   const { isGuestMode, enterGuestMode, exitGuestMode } = useGuest();
   const location = useLocation();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Auto-enable guest mode for direct link access to public pages
@@ -53,16 +52,19 @@ export const DashboardLayout = () => {
 
   return (
     <div className="min-h-screen flex">
-      <Sidebar 
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        onLoginClick={() => setShowAuthModal(true)}
-        isGuestMode={isGuestMode && !user}
-        onExitGuestMode={exitGuestMode}
-      />
+      {/* Sidebar only on desktop */}
+      <div className="hidden lg:block">
+        <Sidebar 
+          isOpen={false}
+          onClose={() => {}}
+          onLoginClick={() => setShowAuthModal(true)}
+          isGuestMode={isGuestMode && !user}
+          onExitGuestMode={exitGuestMode}
+        />
+      </div>
 
       <main className="flex-1 min-h-screen overflow-y-auto">
-        <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
+        <MobileHeader />
         
         <div className="p-6 lg:p-8 max-w-4xl mx-auto pb-24 lg:pb-8">
           {isGuestRestricted ? (
