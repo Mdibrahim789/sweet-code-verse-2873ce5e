@@ -53,7 +53,7 @@ export const ProfileSection = () => {
     return (
       <GuestRestrictedContent 
         title="My Profile" 
-        onLoginClick={() => navigate('/login')} 
+        onLoginClick={() => navigate('/')} 
       />
     );
   }
@@ -67,7 +67,7 @@ export const ProfileSection = () => {
         <p className="text-muted-foreground text-center">
           You need to be logged in to view your profile
         </p>
-        <Button onClick={() => navigate('/login')}>
+        <Button onClick={() => navigate('/')}>
           Log In
         </Button>
       </div>

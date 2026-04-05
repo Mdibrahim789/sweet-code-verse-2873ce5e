@@ -502,7 +502,7 @@ export const HomeSection = () => {
         <EncryptedCard label="Latest Notice" />
       ) : latestNotice && (
         <div 
-          onClick={() => navigate('/notices')}
+          onClick={() => navigate('/dashboard/notices')}
           className="bg-gradient-to-r from-accent/20 to-primary/10 border-2 border-accent/40 p-5 rounded-xl cursor-pointer hover:from-accent/30 hover:to-primary/20 transition-all shadow-lg hover:shadow-xl"
         >
           <div className="flex items-start gap-3">
@@ -520,7 +520,7 @@ export const HomeSection = () => {
       )}
 
       {/* 2. Bus Schedule Preview */}
-      <BusSchedulePreview onNavigate={() => navigate('/bus')} />
+      <BusSchedulePreview onNavigate={() => navigate('/dashboard/bus')} />
 
       {/* 3. Class Routines */}
       <div>
