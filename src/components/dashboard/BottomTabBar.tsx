@@ -4,9 +4,9 @@ import { Home, BookOpen, Bell, Bus, MoreHorizontal, Users, GraduationCap, Clipbo
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 const TABS = [
-  { label: 'Home', icon: Home, path: '/home' },
   { label: 'Academic', icon: BookOpen, path: '/academic' },
   { label: 'Notices', icon: Bell, path: '/notices' },
+  { label: 'Home', icon: Home, path: '/home', isCenter: true },
   { label: 'Bus', icon: Bus, path: '/bus' },
 ];
 
