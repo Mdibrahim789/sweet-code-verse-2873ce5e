@@ -1,56 +1,63 @@
 
+Problem found:
+- 404 হচ্ছে কারণ app-এর আসল routes আছে `/dashboard/home`, `/dashboard/students`, `/dashboard/bus` ইত্যাদিতে
+- কিন্তু অনেক component এখনো পুরনো root-level paths use করছে যেমন `/home`, `/students`, `/bus`, `/profile`, `/login`
+- তাই `/students` এর মতো route open করলে `NotFound` page দেখাচ্ছে
 
-# Plan: Clone test-versity-app Repository
+What I will change:
+1. Route paths standardize করব
+- Sidebar nav items:
+  - `/home` -> `/dashboard/home`
+  - `/academic` -> `/dashboard/academic`
+  - `/students` -> `/dashboard/students`
+  - `/faculty` -> `/dashboard/faculty`
+  - `/notices` -> `/dashboard/notices`
+  - `/attendance` -> `/dashboard/attendance`
+  - `/polls` -> `/dashboard/polls`
+  - `/gallery` -> `/dashboard/gallery`
+  - `/bus` -> `/dashboard/bus`
+  - `/about` -> `/dashboard/about`
+  - `/admin` -> `/dashboard/admin`
 
-## What This App Is
-A university batch portal ("49 Eve-D Batch EEE Portal") for Uttara University's EEE department. It includes authentication, a dashboard with sidebar navigation, and sections for academics, students, faculty, notices, attendance, polls, gallery, bus schedules, and admin management. It uses Supabase for backend (auth, database, storage).
+2. DashboardLayout update করব
+- `PUBLIC_PATHS` কে `/dashboard/bus`, `/dashboard/about` এ change করব
+- `SECTION_TITLES` map-এ সব keys `/dashboard/...` format এ দেব
+- `/login` special handling remove বা safer pattern এ আনব, কারণ actual route হিসেবে `/login` define করা নেই
+- modal close হলে `/home` এর বদলে `/dashboard/home` use করব
 
-## Project Scope
-This is a very large project with **40+ custom files** across:
-- **4 pages**: Index, LandingPage, ResetPassword, NotFound
-- **22 dashboard components**: HomeSection, AcademicSection, StudentsSection, FacultySection, NoticesSection, AttendanceSection, PollsSection, GallerySection, BusSection, AboutSection, AdminSection, ProfileSection, DashboardLayout, Sidebar, MobileHeader, AuthModal, and more
-- **3 contexts**: AuthContext, ThemeContext, GuestContext
-- **13 custom hooks**: useRoutines, useNotices, usePolls, useGallery, useBus, useAttendance, useFaculty, useAcademic, useProfiles, useUserRoles, useCRKeys, useAboutWebsite, usePushNotifications
-- **Supabase integration**: client config + 768-line types file with ~15 database tables
-- **Custom design system**: Electric Engineering theme with Inter/Lora/Space Mono fonts, cyan primary, navy sidebar
-- **Additional deps**: jspdf, lucide-react, recharts, date-fns, etc.
+3. Internal navigation fix করব
+- Sidebar brand link `/dashboard/home`
+- profile click `/dashboard/profile`
+- HomeSection এর quick navigation:
+  - `/notices` -> `/dashboard/notices`
+  - `/bus` -> `/dashboard/bus`
+  - `/polls` -> `/dashboard/polls`
+  - `/gallery` -> `/dashboard/gallery`
+- ProfileSection login/profile related navigation dashboard-aware করব
 
-## Implementation Strategy
+4. Auth modal behavior align করব
+- যদি login modal route-based না হয়, তাহলে fake `/login` path-এর উপর dependency কমাব
+- login button শুধু modal open করবে, invalid route navigation না
 
-Due to the sheer size, this will need to be done in **multiple rounds**. Each round will create a batch of files.
+5. Verify affected route families
+- landing redirect already looks correct in `Index.tsx`
+- check করব যেন `/dashboard/home`, `/dashboard/students`, `/dashboard/profile`, `/dashboard/bus` এ consistent behavior থাকে
+- guest mode restrictions only intended dashboard public pages-এ কাজ করে
 
-### Round 1: Foundation
-1. Update `package.json` with all new dependencies (jspdf, recharts, lucide-react, etc.)
-2. Replace `index.css` with the full Electric Engineering design system (custom colors, fonts, dark mode)
-3. Create `src/integrations/supabase/client.ts` and `src/integrations/supabase/types.ts`
-4. Create all 3 context files (AuthContext, ThemeContext, GuestContext)
-5. Update `App.tsx` with all routes and providers
+Technical details:
+- Root cause file mismatch:
+  - `src/App.tsx` defines nested routes under `/dashboard`
+  - `src/components/dashboard/Sidebar.tsx` still links to root paths
+  - `src/components/dashboard/DashboardLayout.tsx` still checks root paths
+  - `src/components/dashboard/HomeSection.tsx` still navigates to root paths
+  - `src/components/dashboard/ProfileSection.tsx` still uses root login/profile assumptions
+- This is a routing consistency fix, not a Supabase issue
 
-### Round 2: Hooks
-6. Create all 13 custom hooks (useRoutines, useNotices, usePolls, etc.)
+Expected result after implementation:
+- `/dashboard/students`, `/dashboard/faculty`, `/dashboard/notices`, `/dashboard/profile` etc. all open correctly
+- sidebar clicks will no longer land on 404
+- guest/public pages inside dashboard will work consistently
+- direct access to old broken paths can optionally be redirected later if needed
 
-### Round 3: Dashboard Core
-7. Create DashboardLayout, Sidebar, MobileHeader, AuthModal, ThemeToggle
-8. Create GuestRestrictedContent, EditModeToggle, NotificationPrompt, SendNotificationCheckbox
-
-### Round 4: Dashboard Sections (Part 1)
-9. Create HomeSection, AcademicSection, StudentsSection, FacultySection
-
-### Round 5: Dashboard Sections (Part 2)
-10. Create NoticesSection, AttendanceSection, PollsSection, GallerySection
-
-### Round 6: Dashboard Sections (Part 3)
-11. Create BusSection, AboutSection, AdminSection, ProfileSection
-12. Create AddStudentModal, StudentDetailModal
-
-### Round 7: Pages
-13. Create/update Index.tsx, LandingPage.tsx, ResetPassword.tsx
-
-## Technical Notes
-- The app uses Supabase via environment variables (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`) -- these will need to be configured in Lovable Cloud or project settings
-- The Supabase types file defines ~15 tables including: profiles, user_roles, routines, notices, polls, poll_votes, gallery_images, bus_schedules, bus_locations, attendance_records, faculty, academic_subjects, cr_keys, about_website, push_subscriptions
-- Each file will be fetched from the GitHub raw URL and recreated in the project
-
-## Important Caveat
-The Supabase backend (database tables, RLS policies, edge functions) won't be automatically cloned -- only the frontend code. You'll need to either connect the same Supabase project or set up equivalent tables in Lovable Cloud.
-
+Optional improvement after fix:
+- add redirect aliases from old paths (`/students`, `/home`, `/bus`) to new `/dashboard/...` routes so old bookmarks/shared links also keep working
