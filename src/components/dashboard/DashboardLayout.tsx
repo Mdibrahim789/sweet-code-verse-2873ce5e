@@ -6,6 +6,7 @@ import { Sidebar } from './Sidebar';
 import { MobileHeader } from './MobileHeader';
 import { AuthModal } from './AuthModal';
 import { GuestRestrictedContent } from './GuestRestrictedContent';
+import { BottomTabBar } from './BottomTabBar';
 
 // Public paths accessible without login
 const PUBLIC_PATHS = ['/bus', '/about'];
@@ -63,7 +64,7 @@ export const DashboardLayout = () => {
       <main className="flex-1 min-h-screen overflow-y-auto">
         <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
         
-        <div className="p-6 lg:p-8 max-w-4xl mx-auto pb-24">
+        <div className="p-6 lg:p-8 max-w-4xl mx-auto pb-24 lg:pb-8">
           {isGuestRestricted ? (
             <GuestRestrictedContent 
               title={currentTitle} 
@@ -74,6 +75,8 @@ export const DashboardLayout = () => {
           )}
         </div>
       </main>
+
+      <BottomTabBar />
 
       {/* Auth Modal - Always mounted at root level */}
       <AuthModal open={showAuthModal} onOpenChange={handleAuthModalChange} />

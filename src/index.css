@@ -239,6 +239,10 @@
   .sidebar-overlay {
     @apply fixed inset-0 bg-black/50 z-40 lg:hidden;
   }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 @layer utilities {
