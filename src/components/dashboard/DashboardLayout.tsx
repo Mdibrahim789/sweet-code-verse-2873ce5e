@@ -32,7 +32,6 @@ export const DashboardLayout = () => {
   const { isGuestMode, enterGuestMode, exitGuestMode } = useGuest();
   const location = useLocation();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Auto-enable guest mode for direct link access to public pages
