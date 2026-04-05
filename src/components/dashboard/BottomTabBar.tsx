@@ -5,13 +5,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 
 const TABS = [
   { label: 'Academic', icon: BookOpen, path: '/academic' },
-  { label: 'Notices', icon: Bell, path: '/notices' },
+  { label: 'Students', icon: Users, path: '/students' },
   { label: 'Home', icon: Home, path: '/home', isCenter: true },
-  { label: 'Bus', icon: Bus, path: '/bus' },
+  { label: 'Notices', icon: Bell, path: '/notices' },
 ];
 
 const MORE_ITEMS = [
-  { label: 'Students', icon: Users, path: '/students' },
+  { label: 'Bus', icon: Bus, path: '/bus' },
   { label: 'Faculty', icon: GraduationCap, path: '/faculty' },
   { label: 'Attendance', icon: ClipboardCheck, path: '/attendance' },
   { label: 'Polls', icon: BarChart3, path: '/polls' },
