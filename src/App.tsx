@@ -44,20 +44,19 @@ const App = () => (
                 <Route path="/reset-password" element={<ResetPassword />} />
 
                 {/* Dashboard routes with shared layout */}
-                <Route path="/dashboard" element={<DashboardLayout />}>
-                  <Route index element={<Navigate to="home" replace />} />
-                  <Route path="home" element={<HomeSection />} />
-                  <Route path="academic" element={<AcademicSection />} />
-                  <Route path="students" element={<StudentsSection />} />
-                  <Route path="faculty" element={<FacultySection />} />
-                  <Route path="notices" element={<NoticesSection />} />
-                  <Route path="attendance" element={<AttendanceSection />} />
-                  <Route path="polls" element={<PollsSection />} />
-                  <Route path="gallery" element={<GallerySection />} />
-                  <Route path="bus" element={<BusSection />} />
-                  <Route path="about" element={<AboutSection />} />
-                  <Route path="admin" element={<AdminSection />} />
-                  <Route path="profile" element={<ProfileSection />} />
+                <Route element={<DashboardLayout />}>
+                  <Route path="/home" element={<HomeSection />} />
+                  <Route path="/academic" element={<AcademicSection />} />
+                  <Route path="/students" element={<StudentsSection />} />
+                  <Route path="/faculty" element={<FacultySection />} />
+                  <Route path="/notices" element={<NoticesSection />} />
+                  <Route path="/attendance" element={<AttendanceSection />} />
+                  <Route path="/polls" element={<PollsSection />} />
+                  <Route path="/gallery" element={<GallerySection />} />
+                  <Route path="/bus" element={<BusSection />} />
+                  <Route path="/about" element={<AboutSection />} />
+                  <Route path="/admin" element={<AdminSection />} />
+                  <Route path="/profile" element={<ProfileSection />} />
                 </Route>
 
                 {/* 404 */}

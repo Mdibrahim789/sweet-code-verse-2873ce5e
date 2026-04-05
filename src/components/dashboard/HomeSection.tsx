@@ -502,7 +502,7 @@ export const HomeSection = () => {
         <EncryptedCard label="Latest Notice" />
       ) : latestNotice && (
         <div 
-          onClick={() => navigate('/dashboard/notices')}
+          onClick={() => navigate('/notices')}
           className="bg-gradient-to-r from-accent/20 to-primary/10 border-2 border-accent/40 p-5 rounded-xl cursor-pointer hover:from-accent/30 hover:to-primary/20 transition-all shadow-lg hover:shadow-xl"
         >
           <div className="flex items-start gap-3">
@@ -520,7 +520,7 @@ export const HomeSection = () => {
       )}
 
       {/* 2. Bus Schedule Preview */}
-      <BusSchedulePreview onNavigate={() => navigate('/dashboard/bus')} />
+      <BusSchedulePreview onNavigate={() => navigate('/bus')} />
 
       {/* 3. Class Routines */}
       <div>
@@ -741,12 +741,12 @@ export const HomeSection = () => {
       {isGuest ? (
         <EncryptedCard label="Active Poll" />
       ) : latestPoll && (
-        <MiniPollCard poll={latestPoll} onNavigate={() => navigate('/dashboard/polls')} />
+        <MiniPollCard poll={latestPoll} onNavigate={() => navigate('/polls')} />
       )}
 
       {/* 5. Gallery Carousel */}
       {galleryImages.length > 0 && (
-        <GalleryCarousel images={galleryImages} onNavigate={() => navigate('/dashboard/gallery')} />
+        <GalleryCarousel images={galleryImages} onNavigate={() => navigate('/gallery')} />
       )}
 
       {/* Edit Routine Modal */}
