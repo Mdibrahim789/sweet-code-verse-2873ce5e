@@ -18,7 +18,7 @@ const Index = () => {
       if (user) {
         navigate('/dashboard/home', { replace: true });
       } else if (isGuestMode) {
-        navigate('/bus', { replace: true });
+        navigate('/dashboard/bus', { replace: true });
       }
     }
   }, [loading, user, isGuestMode, navigate]);
