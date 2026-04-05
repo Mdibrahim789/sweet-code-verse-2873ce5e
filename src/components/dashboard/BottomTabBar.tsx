@@ -4,9 +4,9 @@ import { Home, BookOpen, Bell, Bus, MoreHorizontal, Users, GraduationCap, Clipbo
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 const TABS = [
-  { label: 'Home', icon: Home, path: '/home' },
   { label: 'Academic', icon: BookOpen, path: '/academic' },
   { label: 'Notices', icon: Bell, path: '/notices' },
+  { label: 'Home', icon: Home, path: '/home', isCenter: true },
   { label: 'Bus', icon: Bus, path: '/bus' },
 ];
 
@@ -33,18 +33,28 @@ export const BottomTabBar = () => {
     <>
       <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-sidebar-background/95 backdrop-blur-lg border-t border-sidebar-border safe-area-bottom">
         <div className="flex items-center justify-around h-16">
-          {TABS.map(({ label, icon: Icon, path }) => (
+          {TABS.map(({ label, icon: Icon, path, isCenter }) => (
             <button
               key={path}
               onClick={() => navigate(path)}
               className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors duration-200 ${
-                isActive(path)
-                  ? 'text-primary'
-                  : 'text-sidebar-muted'
+                isCenter
+                  ? `relative -mt-5 ${isActive(path) ? 'text-primary' : 'text-sidebar-muted'}`
+                  : isActive(path)
+                    ? 'text-primary'
+                    : 'text-sidebar-muted'
               }`}
             >
-              <Icon size={22} strokeWidth={isActive(path) ? 2.5 : 2} />
-              <span className="text-[10px] font-medium">{label}</span>
+              {isCenter ? (
+                <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-full border-4 border-sidebar-background ${
+                  isActive(path) ? 'bg-primary text-primary-foreground' : 'bg-sidebar-accent text-sidebar-muted'
+                } shadow-lg`}>
+                  <Icon size={24} strokeWidth={2.5} />
+                </div>
+              ) : (
+                <Icon size={22} strokeWidth={isActive(path) ? 2.5 : 2} />
+              )}
+              <span className={`text-[10px] font-medium ${isCenter ? 'mt-0.5' : ''}`}>{label}</span>
             </button>
           ))}
           <button
