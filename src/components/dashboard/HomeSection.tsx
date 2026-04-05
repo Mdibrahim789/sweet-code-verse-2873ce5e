@@ -741,12 +741,12 @@ export const HomeSection = () => {
       {isGuest ? (
         <EncryptedCard label="Active Poll" />
       ) : latestPoll && (
-        <MiniPollCard poll={latestPoll} onNavigate={() => navigate('/polls')} />
+        <MiniPollCard poll={latestPoll} onNavigate={() => navigate('/dashboard/polls')} />
       )}
 
       {/* 5. Gallery Carousel */}
       {galleryImages.length > 0 && (
-        <GalleryCarousel images={galleryImages} onNavigate={() => navigate('/gallery')} />
+        <GalleryCarousel images={galleryImages} onNavigate={() => navigate('/dashboard/gallery')} />
       )}
 
       {/* Edit Routine Modal */}
