@@ -8,22 +8,22 @@ import { AuthModal } from './AuthModal';
 import { GuestRestrictedContent } from './GuestRestrictedContent';
 
 // Public paths accessible without login
-const PUBLIC_PATHS = ['/bus', '/about'];
+const PUBLIC_PATHS = ['/dashboard/bus', '/dashboard/about'];
 
 // Map routes to section titles
 const SECTION_TITLES: Record<string, string> = {
-  '/home': 'Dashboard',
-  '/academic': 'Academic',
-  '/students': 'Students',
-  '/faculty': 'Faculty',
-  '/notices': 'Notices',
-  '/attendance': 'Attendance',
-  '/polls': 'Polls',
-  '/gallery': 'Gallery',
-  '/bus': 'Bus Schedule',
-  '/about': 'Why I Built This Website',
-  '/admin': 'Admin Panel',
-  '/profile': 'My Profile'
+  '/dashboard/home': 'Dashboard',
+  '/dashboard/academic': 'Academic',
+  '/dashboard/students': 'Students',
+  '/dashboard/faculty': 'Faculty',
+  '/dashboard/notices': 'Notices',
+  '/dashboard/attendance': 'Attendance',
+  '/dashboard/polls': 'Polls',
+  '/dashboard/gallery': 'Gallery',
+  '/dashboard/bus': 'Bus Schedule',
+  '/dashboard/about': 'Why I Built This Website',
+  '/dashboard/admin': 'Admin Panel',
+  '/dashboard/profile': 'My Profile'
 };
 
 export const DashboardLayout = () => {
@@ -41,19 +41,9 @@ export const DashboardLayout = () => {
     }
   }, [user, isGuestMode, location.pathname, enterGuestMode]);
 
-  // Handle /login route - open auth modal
-  useEffect(() => {
-    if (location.pathname === '/login') {
-      setShowAuthModal(true);
-    }
-  }, [location.pathname]);
-
   // Close auth modal handler
   const handleAuthModalChange = (open: boolean) => {
     setShowAuthModal(open);
-    if (!open && location.pathname === '/login') {
-      navigate('/home');
-    }
   };
 
   // Check if current path is restricted for guests

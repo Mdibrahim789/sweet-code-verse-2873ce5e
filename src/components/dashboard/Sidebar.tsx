@@ -15,20 +15,20 @@ type NavItem = {
 };
 
 // Public paths accessible without login
-const GUEST_ALLOWED_PATHS = ['/bus', '/about'];
+const GUEST_ALLOWED_PATHS = ['/dashboard/bus', '/dashboard/about'];
 
 const navItems: NavItem[] = [
-  { path: '/home', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
-  { path: '/academic', label: 'Academic', icon: <BookOpen className="w-5 h-5" /> },
-  { path: '/students', label: 'Students', icon: <Users className="w-5 h-5" /> },
-  { path: '/faculty', label: 'Faculty', icon: <GraduationCap className="w-5 h-5" /> },
-  { path: '/notices', label: 'Notices', icon: <Bell className="w-5 h-5" /> },
-  { path: '/attendance', label: 'Attendance', icon: <ClipboardCheck className="w-5 h-5" /> },
-  { path: '/polls', label: 'Polls', icon: <Vote className="w-5 h-5" /> },
-  { path: '/gallery', label: 'Gallery', icon: <Image className="w-5 h-5" /> },
-  { path: '/bus', label: 'Bus Schedule', icon: <Bus className="w-5 h-5" /> },
-  { path: '/about', label: 'Why I Built This', icon: <Heart className="w-5 h-5" /> },
-  { path: '/admin', label: 'Admin Panel', icon: <Crown className="w-5 h-5" />, adminOnly: true },
+  { path: '/dashboard/home', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
+  { path: '/dashboard/academic', label: 'Academic', icon: <BookOpen className="w-5 h-5" /> },
+  { path: '/dashboard/students', label: 'Students', icon: <Users className="w-5 h-5" /> },
+  { path: '/dashboard/faculty', label: 'Faculty', icon: <GraduationCap className="w-5 h-5" /> },
+  { path: '/dashboard/notices', label: 'Notices', icon: <Bell className="w-5 h-5" /> },
+  { path: '/dashboard/attendance', label: 'Attendance', icon: <ClipboardCheck className="w-5 h-5" /> },
+  { path: '/dashboard/polls', label: 'Polls', icon: <Vote className="w-5 h-5" /> },
+  { path: '/dashboard/gallery', label: 'Gallery', icon: <Image className="w-5 h-5" /> },
+  { path: '/dashboard/bus', label: 'Bus Schedule', icon: <Bus className="w-5 h-5" /> },
+  { path: '/dashboard/about', label: 'Why I Built This', icon: <Heart className="w-5 h-5" /> },
+  { path: '/dashboard/admin', label: 'Admin Panel', icon: <Crown className="w-5 h-5" />, adminOnly: true },
 ];
 
 interface SidebarProps {
@@ -61,7 +61,7 @@ export const Sidebar = ({ isOpen, onClose, onLoginClick, isGuestMode, onExitGues
   };
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    navigate('/dashboard/profile');
     onClose();
   };
 
@@ -90,7 +90,7 @@ export const Sidebar = ({ isOpen, onClose, onLoginClick, isGuestMode, onExitGues
 
         {/* Brand */}
         <div className="flex items-center justify-between mb-8">
-          <Link to="/home" className="flex items-center gap-3">
+          <Link to="/dashboard/home" className="flex items-center gap-3">
             <Zap className="w-8 h-8 text-primary" />
             <span className="text-2xl font-extrabold text-sidebar-foreground">UU EEE</span>
           </Link>
