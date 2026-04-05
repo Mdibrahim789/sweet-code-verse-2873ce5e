@@ -16,9 +16,9 @@ const Index = () => {
   useEffect(() => {
     if (!loading) {
       if (user) {
-        navigate('/dashboard/home', { replace: true });
+        navigate('/home', { replace: true });
       } else if (isGuestMode) {
-        navigate('/dashboard/bus', { replace: true });
+        navigate('/bus', { replace: true });
       }
     }
   }, [loading, user, isGuestMode, navigate]);

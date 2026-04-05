@@ -8,22 +8,22 @@ import { AuthModal } from './AuthModal';
 import { GuestRestrictedContent } from './GuestRestrictedContent';
 
 // Public paths accessible without login
-const PUBLIC_PATHS = ['/dashboard/bus', '/dashboard/about'];
+const PUBLIC_PATHS = ['/bus', '/about'];
 
 // Map routes to section titles
 const SECTION_TITLES: Record<string, string> = {
-  '/dashboard/home': 'Dashboard',
-  '/dashboard/academic': 'Academic',
-  '/dashboard/students': 'Students',
-  '/dashboard/faculty': 'Faculty',
-  '/dashboard/notices': 'Notices',
-  '/dashboard/attendance': 'Attendance',
-  '/dashboard/polls': 'Polls',
-  '/dashboard/gallery': 'Gallery',
-  '/dashboard/bus': 'Bus Schedule',
-  '/dashboard/about': 'Why I Built This Website',
-  '/dashboard/admin': 'Admin Panel',
-  '/dashboard/profile': 'My Profile'
+  '/home': 'Dashboard',
+  '/academic': 'Academic',
+  '/students': 'Students',
+  '/faculty': 'Faculty',
+  '/notices': 'Notices',
+  '/attendance': 'Attendance',
+  '/polls': 'Polls',
+  '/gallery': 'Gallery',
+  '/bus': 'Bus Schedule',
+  '/about': 'Why I Built This Website',
+  '/admin': 'Admin Panel',
+  '/profile': 'My Profile'
 };
 
 export const DashboardLayout = () => {
