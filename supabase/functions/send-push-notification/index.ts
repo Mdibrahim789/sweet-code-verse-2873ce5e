@@ -12,7 +12,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Validate auth
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(
@@ -25,28 +24,31 @@ Deno.serve(async (req) => {
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // Verify user
+    // Verify user using getUser
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData?.user) {
+      console.error("Auth error:", userError);
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const userId = claimsData.claims.sub;
+    const userId = userData.user.id;
+    console.log("User ID:", userId);
 
     // Check master role using service role client
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
-    const { data: roleCheck } = await adminClient.rpc("has_role", {
+    const { data: roleCheck, error: roleError } = await adminClient.rpc("has_role", {
       _user_id: userId,
       _role: "master",
     });
+
+    console.log("Role check:", roleCheck, "Error:", roleError);
 
     if (!roleCheck) {
       return new Response(
@@ -69,6 +71,7 @@ Deno.serve(async (req) => {
     const oneSignalApiKey = Deno.env.get("ONESIGNAL_REST_API_KEY");
 
     if (!oneSignalAppId || !oneSignalApiKey) {
+      console.error("OneSignal not configured. APP_ID:", !!oneSignalAppId, "API_KEY:", !!oneSignalApiKey);
       return new Response(
         JSON.stringify({ error: "OneSignal not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -89,6 +92,8 @@ Deno.serve(async (req) => {
       notificationPayload.data = data;
     }
 
+    console.log("Sending to OneSignal:", JSON.stringify(notificationPayload));
+
     const oneSignalResponse = await fetch(
       "https://onesignal.com/api/v1/notifications",
       {
@@ -102,9 +107,9 @@ Deno.serve(async (req) => {
     );
 
     const result = await oneSignalResponse.json();
+    console.log("OneSignal response:", JSON.stringify(result));
 
     if (!oneSignalResponse.ok) {
-      console.error("OneSignal API error:", result);
       return new Response(
         JSON.stringify({ error: result.errors?.[0] || "Failed to send notification" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
