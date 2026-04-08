@@ -53,6 +53,27 @@ export const AcademicSection = () => {
     }
   };
 
+  const handleAddSuggestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!suggestionForm.course_name || !suggestionForm.title) return toast.error('Course name and title required');
+    if (!suggestionFile && !suggestionForm.link_url) return toast.error('Upload a file or provide a link');
+
+    try {
+      await addSuggestion.mutateAsync({
+        course_name: suggestionForm.course_name,
+        title: suggestionForm.title,
+        description: suggestionForm.description || undefined,
+        file: suggestionFile || undefined,
+        link_url: suggestionForm.link_url || undefined,
+      });
+      setSuggestionForm({ course_name: '', title: '', description: '', link_url: '' });
+      setSuggestionFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      toast.success('Suggestion added');
+    } catch {
+      toast.error('Failed to add suggestion');
+    }
+  };
   const handleAddResource = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!resourceForm.title || !resourceForm.url) return toast.error('Title and URL required');
