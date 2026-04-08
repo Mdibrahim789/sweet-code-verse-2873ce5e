@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { EditModeToggle } from './EditModeToggle';
+import { FacultyListSkeleton } from './SectionSkeletons';
 import { toast } from 'sonner';
 
 const ROLE_OPTIONS: { value: FacultyRole; label: string }[] = [
@@ -59,7 +60,7 @@ const initialFormData: FacultyFormData = {
 
 export const FacultySection = () => {
   const { hasPermission } = useAuth();
-  const { data: faculty = [] } = useFaculty();
+  const { data: faculty = [], isLoading } = useFaculty();
   const addFaculty = useAddFaculty();
   const updateFaculty = useUpdateFaculty();
   const deleteFaculty = useDeleteFaculty();
@@ -241,6 +242,15 @@ export const FacultySection = () => {
       )}
     </div>
   );
+
+  if (isLoading) {
+    return (
+      <div className="animate-fade-up">
+        <h2 className="section-title mb-4">👨‍🏫 Faculty Members</h2>
+        <FacultyListSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-up">

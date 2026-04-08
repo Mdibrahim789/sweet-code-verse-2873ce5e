@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { EditModeToggle } from './EditModeToggle';
+import { PollSkeleton } from './SectionSkeletons';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -80,7 +81,7 @@ const PollCard = ({ poll, isEditMode }: { poll: { id: string; question: string; 
 
 export const PollsSection = () => {
   const { hasPermission } = useAuth();
-  const { data: polls = [] } = usePolls();
+  const { data: polls = [], isLoading } = usePolls();
   const addPoll = useAddPoll();
 
   const [formData, setFormData] = useState({
@@ -106,6 +107,18 @@ export const PollsSection = () => {
       toast.error('Failed to create poll');
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="animate-fade-up">
+        <h2 className="section-title mb-4">🗳️ Voting & Polls</h2>
+        <div className="space-y-4">
+          <PollSkeleton />
+          <PollSkeleton />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-up">

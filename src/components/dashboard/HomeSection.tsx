@@ -7,6 +7,7 @@ import { usePolls, usePollVotes, useVote } from '@/hooks/usePolls';
 import { useGallery } from '@/hooks/useGallery';
 import { useBusLocations, useBusSchedules } from '@/hooks/useBus';
 import { ExamCountdown } from './ExamCountdown';
+import { HomeSectionSkeleton } from './SectionSkeletons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { cn } from '@/lib/utils';
@@ -341,10 +342,10 @@ export const HomeSection = () => {
   const isGuest = isGuestMode && !user;
   
   const { hasPermission } = useAuth();
-  const { data: routines = [] } = useRoutines();
-  const { data: notices = [] } = useNotices();
-  const { data: polls = [] } = usePolls();
-  const { images: galleryImages } = useGallery();
+  const { data: routines = [], isLoading: routinesLoading } = useRoutines();
+  const { data: notices = [], isLoading: noticesLoading } = useNotices();
+  const { data: polls = [], isLoading: pollsLoading } = usePolls();
+  const { images: galleryImages, isLoading: galleryLoading } = useGallery();
   const addRoutine = useAddRoutine();
   const updateRoutine = useUpdateRoutine();
   const deleteRoutine = useDeleteRoutine();
@@ -495,6 +496,16 @@ export const HomeSection = () => {
       </div>
     </div>
   );
+
+  const isLoading = routinesLoading && noticesLoading && pollsLoading;
+
+  if (isLoading) {
+    return (
+      <div className="animate-fade-up space-y-6">
+        <HomeSectionSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-up space-y-6">

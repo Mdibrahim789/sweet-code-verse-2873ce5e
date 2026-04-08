@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { EditModeToggle } from './EditModeToggle';
+import { AttendanceSkeleton } from './SectionSkeletons';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -15,8 +16,8 @@ import autoTable from 'jspdf-autotable';
 
 export const AttendanceSection = () => {
   const { hasPermission, user, profile } = useAuth();
-  const { data: attendance = [] } = useAttendance();
-  const { data: profiles = [] } = useProfiles();
+  const { data: attendance = [], isLoading: attendanceLoading } = useAttendance();
+  const { data: profiles = [], isLoading: profilesLoading } = useProfiles();
   const addAttendance = useAddAttendance();
   const updateAttendance = useUpdateAttendance();
   const deleteAttendance = useDeleteAttendance();
@@ -215,6 +216,17 @@ export const AttendanceSection = () => {
     doc.save(`Attendance_${record.subject}_${record.date}.pdf`);
     toast.success('PDF downloaded!');
   };
+
+  const isLoading = attendanceLoading || profilesLoading;
+
+  if (isLoading) {
+    return (
+      <div className="animate-fade-up">
+        <h2 className="section-title mb-4">📝 Attendance</h2>
+        <AttendanceSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-up">
