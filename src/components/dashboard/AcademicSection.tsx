@@ -14,16 +14,31 @@ export const AcademicSection = () => {
   const { hasPermission } = useAuth();
   const { data: courses = [] } = useCourses();
   const { data: resources = [] } = useResources();
+  const { data: suggestions = [] } = useExamSuggestions();
   const addCourse = useAddCourse();
   const addResource = useAddResource();
   const deleteCourse = useDeleteCourse();
   const deleteResource = useDeleteResource();
+  const addSuggestion = useAddExamSuggestion();
+  const deleteSuggestion = useDeleteExamSuggestion();
 
   const [courseForm, setCourseForm] = useState({ name: '', code: '', syllabus_link: '' });
   const [resourceForm, setResourceForm] = useState({ title: '', url: '' });
+  const [suggestionForm, setSuggestionForm] = useState({ course_name: '', title: '', description: '', link_url: '' });
+  const [suggestionFile, setSuggestionFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const canEdit = hasPermission('academic');
+
+  const groupedSuggestions = useMemo(() => {
+    const grouped: Record<string, typeof suggestions> = {};
+    suggestions.forEach(s => {
+      if (!grouped[s.course_name]) grouped[s.course_name] = [];
+      grouped[s.course_name].push(s);
+    });
+    return grouped;
+  }, [suggestions]);
 
   const handleAddCourse = async (e: React.FormEvent) => {
     e.preventDefault();
