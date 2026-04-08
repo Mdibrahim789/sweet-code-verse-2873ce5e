@@ -10,10 +10,11 @@ import { Badge } from '@/components/ui/badge';
 import { StudentDetailModal } from './StudentDetailModal';
 import { AddStudentModal } from './AddStudentModal';
 import { EditModeToggle } from './EditModeToggle';
+import { StudentListSkeleton } from './SectionSkeletons';
 
 export const StudentsSection = () => {
   const { hasPermission, user, isMaster } = useAuth();
-  const { data: profiles = [], refetch } = useProfiles();
+  const { data: profiles = [], refetch, isLoading } = useProfiles();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddDialog, setShowAddDialog] = useState(false);

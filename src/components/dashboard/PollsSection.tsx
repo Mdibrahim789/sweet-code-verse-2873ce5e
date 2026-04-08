@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { EditModeToggle } from './EditModeToggle';
+import { PollSkeleton } from './SectionSkeletons';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 

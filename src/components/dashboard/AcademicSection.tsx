@@ -8,13 +8,14 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { EditModeToggle } from './EditModeToggle';
+import { AcademicSkeleton } from './SectionSkeletons';
 import { toast } from 'sonner';
 
 export const AcademicSection = () => {
   const { hasPermission } = useAuth();
-  const { data: courses = [] } = useCourses();
-  const { data: resources = [] } = useResources();
-  const { data: suggestions = [] } = useExamSuggestions();
+  const { data: courses = [], isLoading: coursesLoading } = useCourses();
+  const { data: resources = [], isLoading: resourcesLoading } = useResources();
+  const { data: suggestions = [], isLoading: suggestionsLoading } = useExamSuggestions();
   const addCourse = useAddCourse();
   const addResource = useAddResource();
   const deleteCourse = useDeleteCourse();

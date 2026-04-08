@@ -10,12 +10,13 @@ import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { SendNotificationCheckbox } from './SendNotificationCheckbox';
 import { EditModeToggle } from './EditModeToggle';
+import { CardListSkeleton } from './SectionSkeletons';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 
 export const NoticesSection = () => {
   const { hasPermission, isMaster } = useAuth();
-  const { data: notices = [] } = useNotices();
+  const { data: notices = [], isLoading } = useNotices();
   const addNotice = useAddNotice();
   const deleteNotice = useDeleteNotice();
   const { sendNotification } = usePushNotifications();

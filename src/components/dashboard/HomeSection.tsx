@@ -341,10 +341,10 @@ export const HomeSection = () => {
   const isGuest = isGuestMode && !user;
   
   const { hasPermission } = useAuth();
-  const { data: routines = [] } = useRoutines();
-  const { data: notices = [] } = useNotices();
-  const { data: polls = [] } = usePolls();
-  const { images: galleryImages } = useGallery();
+  const { data: routines = [], isLoading: routinesLoading } = useRoutines();
+  const { data: notices = [], isLoading: noticesLoading } = useNotices();
+  const { data: polls = [], isLoading: pollsLoading } = usePolls();
+  const { images: galleryImages, isLoading: galleryLoading } = useGallery();
   const addRoutine = useAddRoutine();
   const updateRoutine = useUpdateRoutine();
   const deleteRoutine = useDeleteRoutine();

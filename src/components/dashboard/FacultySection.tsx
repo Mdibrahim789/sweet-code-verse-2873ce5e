@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { EditModeToggle } from './EditModeToggle';
+import { FacultyListSkeleton } from './SectionSkeletons';
 import { toast } from 'sonner';
 
 const ROLE_OPTIONS: { value: FacultyRole; label: string }[] = [
