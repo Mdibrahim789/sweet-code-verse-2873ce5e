@@ -63,31 +63,14 @@ export const usePushNotifications = () => {
             allowLocalhostAsSecureOrigin: true,
             autoResubscribe: true,
             notifyButton: {
-              enable: false // Disable the bell icon, we'll use slidedown only
+              enable: false
+            },
+            promptOptions: {
+              autoPrompt: false // Disable auto slidedown - we use custom prompt
             }
           });
 
           console.log('OneSignal initialized successfully');
-          
-          // Check permission and show slidedown if needed
-          const permission = await OneSignal.Notifications.permission;
-          const isPushEnabled = await OneSignal.User.PushSubscription.optedIn;
-          
-          console.log('OneSignal permission:', permission, 'isPushEnabled:', isPushEnabled);
-          
-          // If not subscribed, show the slidedown prompt after a delay
-          if (!isPushEnabled && permission !== false) {
-            console.log('Showing OneSignal slidedown prompt...');
-            setTimeout(async () => {
-              try {
-                await OneSignal.Slidedown.promptPush();
-                console.log('Slidedown prompt shown');
-              } catch (err) {
-                console.log('Slidedown prompt error (may already be shown):', err);
-              }
-            }, 2000);
-          }
-
           checkSubscriptionStatus();
         } catch (error) {
           console.error('OneSignal init error:', error);
