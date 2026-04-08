@@ -150,7 +150,7 @@ export const usePushNotifications = () => {
       return isPushEnabled;
     } catch (error) {
       console.error('Error subscribing:', error);
-      toast.error('নোটিফিকেশন সাবস্ক্রাইব করতে সমস্যা হয়েছে');
+      toast.error('Failed to enable notifications');
       return false;
     }
   }, [user]);
@@ -169,11 +169,11 @@ export const usePushNotifications = () => {
           .eq('user_id', user.id);
       }
 
-      toast.success('নোটিফিকেশন বন্ধ করা হয়েছে');
+      toast.success('Notifications disabled');
       return true;
     } catch (error) {
       console.error('Error unsubscribing:', error);
-      toast.error('নোটিফিকেশন বন্ধ করতে সমস্যা হয়েছে');
+      toast.error('Failed to disable notifications');
       return false;
     }
   }, [user]);
@@ -204,11 +204,11 @@ export const usePushNotifications = () => {
         throw new Error(response.error.message);
       }
 
-      toast.success(`নোটিফিকেশন পাঠানো হয়েছে! (${response.data.recipients || 0} জন)`);
+      toast.success(`Notification sent! (${response.data.recipients || 0} recipients)`);
       return true;
     } catch (error: any) {
       console.error('Error sending notification:', error);
-      toast.error(error.message || 'নোটিফিকেশন পাঠাতে সমস্যা হয়েছে');
+      toast.error(error.message || 'Failed to send notification');
       return false;
     }
   }, [isMaster]);
