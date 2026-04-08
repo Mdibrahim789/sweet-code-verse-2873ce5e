@@ -1,6 +1,7 @@
-import { Zap, Users, BookOpen, Bell, ArrowRight, Eye } from 'lucide-react';
+import { Zap, Users, BookOpen, Bell, ArrowRight, Eye, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { usePWAInstall } from '@/hooks/usePWAInstall';
 
 interface LandingPageProps {
   onLoginClick: () => void;
@@ -11,6 +12,8 @@ export const LandingPage = ({
   onLoginClick,
   onGuestViewClick
 }: LandingPageProps) => {
+  const { isInstallable, promptInstall } = usePWAInstall();
+
   return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -21,6 +24,12 @@ export const LandingPage = ({
           </div>
           <div className="flex items-center gap-4">
             <ThemeToggle />
+            {isInstallable && (
+              <Button onClick={promptInstall} variant="outline" size="sm" className="gap-1.5">
+                <Download className="w-4 h-4" />
+                Install
+              </Button>
+            )}
             <Button onClick={onLoginClick} size="lg" className="font-bold">
               Login
             </Button>
