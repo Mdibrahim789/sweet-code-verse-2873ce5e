@@ -32,7 +32,7 @@ export const SendNotificationCheckbox = ({
         className="flex items-center gap-2 cursor-pointer text-sm"
       >
         <Bell className="w-4 h-4 text-primary" />
-        সবাইকে Push Notification পাঠান
+        Send Push Notification to all
       </Label>
     </div>
   );

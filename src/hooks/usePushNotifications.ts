@@ -144,7 +144,7 @@ export const usePushNotifications = () => {
             is_active: true
           }, { onConflict: 'user_id,player_id' });
         }
-        toast.success('নোটিফিকেশন সাবস্ক্রাইব করা হয়েছে!');
+        toast.success('Notifications enabled!');
       }
 
       return isPushEnabled;
