@@ -57,7 +57,7 @@ export const ExamCountdown = () => {
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title || !form.exam_date) {
-      toast.error('Title ও Date দিতে হবে');
+      toast.error('Title and Date are required');
       return;
     }
     try {
@@ -69,19 +69,19 @@ export const ExamCountdown = () => {
       });
       setForm({ title: '', exam_date: '', subject: '', location: '' });
       setShowAddForm(false);
-      toast.success('Exam যোগ হয়েছে');
+      toast.success('Exam added successfully');
     } catch {
-      toast.error('Exam যোগ করা যায়নি');
+      toast.error('Failed to add exam');
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('এই exam মুছে ফেলবেন?')) {
+    if (confirm('Delete this exam?')) {
       try {
         await deleteExam.mutateAsync(id);
-        toast.success('Exam মুছে ফেলা হয়েছে');
+        toast.success('Exam deleted');
       } catch {
-        toast.error('মুছতে পারা যায়নি');
+        toast.error('Failed to delete');
       }
     }
   };
@@ -139,7 +139,7 @@ export const ExamCountdown = () => {
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  📅 {new Date(nextExam.exam_date).toLocaleString('bn-BD', {
+                  📅 {new Date(nextExam.exam_date).toLocaleString('en-US', {
                     dateStyle: 'long',
                     timeStyle: 'short',
                   })}
@@ -147,22 +147,22 @@ export const ExamCountdown = () => {
               </div>
 
               <div className="flex justify-center gap-3 sm:gap-4">
-                <CountdownBox value={countdown!.days} label="দিন" urgent={isUrgent} />
-                <CountdownBox value={countdown!.hours} label="ঘণ্টা" urgent={isUrgent} />
-                <CountdownBox value={countdown!.minutes} label="মিনিট" urgent={isUrgent} />
-                <CountdownBox value={countdown!.seconds} label="সেকেন্ড" urgent={isUrgent} />
+                <CountdownBox value={countdown!.days} label="Days" urgent={isUrgent} />
+                <CountdownBox value={countdown!.hours} label="Hours" urgent={isUrgent} />
+                <CountdownBox value={countdown!.minutes} label="Min" urgent={isUrgent} />
+                <CountdownBox value={countdown!.seconds} label="Sec" urgent={isUrgent} />
               </div>
 
               {exams.length > 1 && (
                 <div className="border-t border-border/50 pt-3 mt-3">
-                  <p className="text-xs text-muted-foreground mb-2">আরও আসন্ন পরীক্ষা:</p>
+                  <p className="text-xs text-muted-foreground mb-2">More upcoming exams:</p>
                   <div className="space-y-1.5">
                     {exams.slice(1, 4).map(exam => (
                       <div key={exam.id} className="flex items-center justify-between text-sm">
                         <span className="text-foreground truncate flex-1">{exam.title}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-muted-foreground whitespace-nowrap">
-                            {new Date(exam.exam_date).toLocaleDateString('bn-BD')}
+                            {new Date(exam.exam_date).toLocaleDateString('en-US')}
                           </span>
                           {canEdit && (
                             <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => handleDelete(exam.id)}>
@@ -183,7 +183,7 @@ export const ExamCountdown = () => {
                   className="w-full text-xs text-destructive hover:text-destructive"
                   onClick={() => handleDelete(nextExam.id)}
                 >
-                  <Trash2 className="w-3 h-3 mr-1" /> এই পরীক্ষা মুছুন
+                  <Trash2 className="w-3 h-3 mr-1" /> Delete this exam
                 </Button>
               )}
             </div>
@@ -194,11 +194,11 @@ export const ExamCountdown = () => {
       <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>নতুন পরীক্ষা যোগ করুন</DialogTitle>
+            <DialogTitle>Add New Exam</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleAdd} className="space-y-3">
             <Input
-              placeholder="পরীক্ষার নাম (যেমন: Mid Term)"
+              placeholder="Exam name (e.g. Mid Term)"
               value={form.title}
               onChange={e => setForm({ ...form, title: e.target.value })}
               required
@@ -220,7 +220,7 @@ export const ExamCountdown = () => {
               onChange={e => setForm({ ...form, location: e.target.value })}
             />
             <Button type="submit" className="w-full" disabled={addExam.isPending}>
-              {addExam.isPending ? 'যোগ হচ্ছে...' : 'পরীক্ষা যোগ করুন'}
+              {addExam.isPending ? 'Adding...' : 'Add Exam'}
             </Button>
           </form>
         </DialogContent>
