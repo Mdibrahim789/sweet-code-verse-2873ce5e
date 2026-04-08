@@ -29,16 +29,16 @@ export const NotificationPrompt = () => {
           <Bell className="w-5 h-5" />
         </div>
         <div className="flex-1">
-          <h4 className="font-semibold text-sm">নোটিফিকেশন চালু করুন</h4>
+          <h4 className="font-semibold text-sm">Enable Notifications</h4>
           <p className="text-xs text-muted-foreground mt-1">
-            নতুন নোটিশ, রুটিন এবং বাস সিডিউল আপডেট তাৎক্ষণিক পান
+            Get instant updates for new notices, routines, and bus schedules
           </p>
           <div className="flex gap-2 mt-3">
             <Button size="sm" onClick={subscribe}>
-              চালু করুন
+              Enable
             </Button>
             <Button size="sm" variant="ghost" onClick={() => setDismissed(true)}>
-              পরে
+              Later
             </Button>
           </div>
         </div>
