@@ -1,47 +1,24 @@
 
-
-# Plan: PWA Support যোগ করা
-
-## সংক্ষেপে
-App টি PWA (Progressive Web App) হিসেবে সেটআপ করা হবে যাতে মোবাইলে "Add to Home Screen" এর মাধ্যমে install করা যায়, offline এ কাজ করে, এবং splash screen ও app icon দেখায়।
-
-## গুরুত্বপূর্ণ সতর্কতা
-- PWA features (install prompt, offline support) শুধুমাত্র **published version** এ কাজ করবে, Lovable editor preview তে কাজ করবে না
-- Editor preview তে service worker disable থাকবে যাতে development এ কোনো সমস্যা না হয়
+# Plan: PWA Install Button যোগ করা
 
 ## যা করা হবে
+একটি "Install App" বাটন যোগ করা হবে যেটা `beforeinstallprompt` event ব্যবহার করে ব্রাউজারের native install prompt trigger করবে।
 
-### 1. `vite-plugin-pwa` install করা
-- Package install: `vite-plugin-pwa`
+## Technical Changes
 
-### 2. PWA Icons তৈরি করা
-- `public/` folder এ PWA icons তৈরি করা (192x192, 512x512 px) — SVG-based generated icons
+### 1. `src/hooks/usePWAInstall.ts` — নতুন hook তৈরি
+- `beforeinstallprompt` event listen করবে
+- `isInstallable` state ও `promptInstall()` function expose করবে
+- App already installed থাকলে বাটন hide হবে (`display-mode: standalone` check)
 
-### 3. `vite.config.ts` আপডেট করা
-- `VitePWA` plugin যোগ করা manifest config সহ:
-  - App name, short name, description
-  - Theme color, background color
-  - Icons (192x192, 512x512)
-  - `display: "standalone"`
-  - `registerType: "autoUpdate"`
-  - `devOptions: { enabled: false }` — preview তে disable
-  - `navigateFallbackDenylist: [/^\/~oauth/]`
+### 2. `src/components/dashboard/MobileHeader.tsx` — Install বাটন যোগ করা
+- Mobile header এ একটি ছোট install icon button দেখাবে (Download icon)
+- শুধু তখনই দেখাবে যখন app installable (`isInstallable === true`)
+- Already installed হলে বা desktop browser এ support না থাকলে বাটন hide থাকবে
 
-### 4. `src/main.tsx` আপডেট করা
-- iframe/preview host detection guard যোগ করা
-- Preview/iframe context এ service worker unregister করা
+### 3. `src/pages/LandingPage.tsx` — Landing page এও install option
+- Hero section এ বা header এ install button দেখাবে যখন available
 
-### 5. `index.html` আপডেট করা
-- Apple touch icon meta tags
-- `theme-color` meta tag
-- `apple-mobile-web-app-capable` ও `apple-mobile-web-app-status-bar-style` meta tags
-
-### 6. Manifest details
-- **App Name**: "49EveD EEE in UU" (বা সংক্ষেপে যা আছে)
-- **Theme Color**: App এর primary color
-- **Display**: standalone
-- **Start URL**: `/home`
-
-## ফলাফল
-Published site এ যেকোনো মোবাইল browser এ visit করলে "Add to Home Screen" option আসবে। Install করলে app এর মতো open হবে, splash screen দেখাবে, এবং offline এ cached pages দেখাবে।
-
+## গুরুত্বপূর্ণ
+- Install prompt শুধু published site এ কাজ করবে (preview তে কাজ করবে না)
+- Chrome/Edge/Samsung Browser এ কাজ করবে, Safari তে "Add to Home Screen" manually করতে হবে
