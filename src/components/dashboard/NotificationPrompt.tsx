@@ -46,7 +46,7 @@ export const NotificationPrompt = () => {
   return (
     <Card className="fixed bottom-4 right-4 z-50 p-4 max-w-sm shadow-lg border-primary/20 bg-card animate-fade-up">
       <button
-        onClick={() => setDismissed(true)}
+        onClick={handleDismiss}
         className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
       >
         <X className="w-4 h-4" />
@@ -62,10 +62,10 @@ export const NotificationPrompt = () => {
             Get instant updates for new notices, routines, and bus schedules
           </p>
           <div className="flex gap-2 mt-3">
-            <Button size="sm" onClick={subscribe}>
+            <Button size="sm" onClick={handleSubscribe}>
               Enable
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => setDismissed(true)}>
+            <Button size="sm" variant="ghost" onClick={handleDismiss}>
               Later
             </Button>
           </div>
