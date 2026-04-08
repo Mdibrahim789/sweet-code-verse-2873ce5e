@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { Trash2, FileText, ExternalLink } from 'lucide-react';
+import { useState, useRef, useMemo } from 'react';
+import { Trash2, FileText, ExternalLink, Upload, Download, Link } from 'lucide-react';
 import { useCourses, useResources, useAddCourse, useAddResource, useDeleteCourse, useDeleteResource } from '@/hooks/useAcademic';
+import { useExamSuggestions, useAddExamSuggestion, useDeleteExamSuggestion } from '@/hooks/useExamSuggestions';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
 import { EditModeToggle } from './EditModeToggle';
 import { toast } from 'sonner';
 
@@ -12,16 +14,31 @@ export const AcademicSection = () => {
   const { hasPermission } = useAuth();
   const { data: courses = [] } = useCourses();
   const { data: resources = [] } = useResources();
+  const { data: suggestions = [] } = useExamSuggestions();
   const addCourse = useAddCourse();
   const addResource = useAddResource();
   const deleteCourse = useDeleteCourse();
   const deleteResource = useDeleteResource();
+  const addSuggestion = useAddExamSuggestion();
+  const deleteSuggestion = useDeleteExamSuggestion();
 
   const [courseForm, setCourseForm] = useState({ name: '', code: '', syllabus_link: '' });
   const [resourceForm, setResourceForm] = useState({ title: '', url: '' });
+  const [suggestionForm, setSuggestionForm] = useState({ course_name: '', title: '', description: '', link_url: '' });
+  const [suggestionFile, setSuggestionFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const canEdit = hasPermission('academic');
+
+  const groupedSuggestions = useMemo(() => {
+    const grouped: Record<string, typeof suggestions> = {};
+    suggestions.forEach(s => {
+      if (!grouped[s.course_name]) grouped[s.course_name] = [];
+      grouped[s.course_name].push(s);
+    });
+    return grouped;
+  }, [suggestions]);
 
   const handleAddCourse = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +53,27 @@ export const AcademicSection = () => {
     }
   };
 
+  const handleAddSuggestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!suggestionForm.course_name || !suggestionForm.title) return toast.error('Course name and title required');
+    if (!suggestionFile && !suggestionForm.link_url) return toast.error('Upload a file or provide a link');
+
+    try {
+      await addSuggestion.mutateAsync({
+        course_name: suggestionForm.course_name,
+        title: suggestionForm.title,
+        description: suggestionForm.description || undefined,
+        file: suggestionFile || undefined,
+        link_url: suggestionForm.link_url || undefined,
+      });
+      setSuggestionForm({ course_name: '', title: '', description: '', link_url: '' });
+      setSuggestionFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      toast.success('Suggestion added');
+    } catch {
+      toast.error('Failed to add suggestion');
+    }
+  };
   const handleAddResource = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!resourceForm.title || !resourceForm.url) return toast.error('Title and URL required');
@@ -97,6 +135,49 @@ export const AcademicSection = () => {
               onChange={(e) => setResourceForm({ ...resourceForm, url: e.target.value })}
             />
             <Button type="submit" className="w-full">Add Resource</Button>
+          </form>
+
+          <hr className="border-border" />
+
+          <form onSubmit={handleAddSuggestion} className="space-y-3">
+            <h3 className="font-semibold">Add Exam Suggestion</h3>
+            <Input 
+              placeholder="Course Name (e.g. Physics)" 
+              value={suggestionForm.course_name}
+              onChange={(e) => setSuggestionForm({ ...suggestionForm, course_name: e.target.value })}
+            />
+            <Input 
+              placeholder="Title" 
+              value={suggestionForm.title}
+              onChange={(e) => setSuggestionForm({ ...suggestionForm, title: e.target.value })}
+            />
+            <Textarea 
+              placeholder="Description (optional)" 
+              value={suggestionForm.description}
+              onChange={(e) => setSuggestionForm({ ...suggestionForm, description: e.target.value })}
+              rows={2}
+            />
+            <Input 
+              placeholder="Link URL (optional)" 
+              value={suggestionForm.link_url}
+              onChange={(e) => setSuggestionForm({ ...suggestionForm, link_url: e.target.value })}
+            />
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+                <Upload className="w-4 h-4 mr-1" /> Upload PDF
+              </Button>
+              {suggestionFile && <span className="text-sm text-muted-foreground">{suggestionFile.name}</span>}
+              <input 
+                ref={fileInputRef}
+                type="file" 
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.png"
+                className="hidden"
+                onChange={(e) => setSuggestionFile(e.target.files?.[0] || null)}
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={addSuggestion.isPending}>
+              {addSuggestion.isPending ? 'Adding...' : 'Add Suggestion'}
+            </Button>
           </form>
         </div>
       )}
@@ -162,6 +243,53 @@ export const AcademicSection = () => {
         {resources.length === 0 && (
           <p className="text-muted-foreground text-center py-4">No resources added yet</p>
         )}
+      </div>
+
+      {/* Exam Suggestions */}
+      <h3 className="text-lg font-semibold mb-3 mt-8">📝 Exam Suggestions</h3>
+      <div className="space-y-5">
+        {Object.keys(groupedSuggestions).length === 0 && (
+          <p className="text-muted-foreground text-center py-4">No exam suggestions yet</p>
+        )}
+        {Object.entries(groupedSuggestions).map(([courseName, items]) => (
+          <div key={courseName}>
+            <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-2">{courseName}</h4>
+            <div className="space-y-2">
+              {items.map((s) => (
+                <Card key={s.id} className="p-4 flex items-center justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold truncate">{s.title}</p>
+                    {s.description && <p className="text-sm text-muted-foreground line-clamp-2">{s.description}</p>}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {s.file_url && (
+                      <a href={s.file_url} target="_blank" rel="noopener noreferrer">
+                        <Button variant="outline" size="sm">
+                          <Download className="w-4 h-4 mr-1" /> PDF
+                        </Button>
+                      </a>
+                    )}
+                    {s.link_url && (
+                      <a href={s.link_url} target="_blank" rel="noopener noreferrer">
+                        <Button variant="outline" size="sm">
+                          <Link className="w-4 h-4 mr-1" /> Link
+                        </Button>
+                      </a>
+                    )}
+                    {canEdit && isEditMode && (
+                      <button 
+                        onClick={() => deleteSuggestion.mutate(s.id)}
+                        className="text-destructive hover:text-destructive/80"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
