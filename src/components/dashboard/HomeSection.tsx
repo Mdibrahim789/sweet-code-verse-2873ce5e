@@ -7,6 +7,7 @@ import { usePolls, usePollVotes, useVote } from '@/hooks/usePolls';
 import { useGallery } from '@/hooks/useGallery';
 import { useBusLocations, useBusSchedules } from '@/hooks/useBus';
 import { ExamCountdown } from './ExamCountdown';
+import { HomeSectionSkeleton } from './SectionSkeletons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { cn } from '@/lib/utils';
