@@ -136,6 +136,49 @@ export const AcademicSection = () => {
             />
             <Button type="submit" className="w-full">Add Resource</Button>
           </form>
+
+          <hr className="border-border" />
+
+          <form onSubmit={handleAddSuggestion} className="space-y-3">
+            <h3 className="font-semibold">Add Exam Suggestion</h3>
+            <Input 
+              placeholder="Course Name (e.g. Physics)" 
+              value={suggestionForm.course_name}
+              onChange={(e) => setSuggestionForm({ ...suggestionForm, course_name: e.target.value })}
+            />
+            <Input 
+              placeholder="Title" 
+              value={suggestionForm.title}
+              onChange={(e) => setSuggestionForm({ ...suggestionForm, title: e.target.value })}
+            />
+            <Textarea 
+              placeholder="Description (optional)" 
+              value={suggestionForm.description}
+              onChange={(e) => setSuggestionForm({ ...suggestionForm, description: e.target.value })}
+              rows={2}
+            />
+            <Input 
+              placeholder="Link URL (optional)" 
+              value={suggestionForm.link_url}
+              onChange={(e) => setSuggestionForm({ ...suggestionForm, link_url: e.target.value })}
+            />
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+                <Upload className="w-4 h-4 mr-1" /> Upload PDF
+              </Button>
+              {suggestionFile && <span className="text-sm text-muted-foreground">{suggestionFile.name}</span>}
+              <input 
+                ref={fileInputRef}
+                type="file" 
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.png"
+                className="hidden"
+                onChange={(e) => setSuggestionFile(e.target.files?.[0] || null)}
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={addSuggestion.isPending}>
+              {addSuggestion.isPending ? 'Adding...' : 'Add Suggestion'}
+            </Button>
+          </form>
         </div>
       )}
 
