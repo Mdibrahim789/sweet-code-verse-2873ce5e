@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { EditModeToggle } from './EditModeToggle';
+import { BusScheduleSkeleton } from './SectionSkeletons';
 import { 
   useBusLocations, 
   useBusSchedules, 
@@ -344,7 +345,12 @@ export const BusSection = () => {
   };
 
   if (locationsLoading) {
-    return <div className="animate-pulse text-muted-foreground">Loading bus information...</div>;
+    return (
+      <div className="animate-fade-up">
+        <BusScheduleSkeleton />
+      </div>
+    );
+  }
   }
 
   return (

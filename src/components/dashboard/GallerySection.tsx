@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Plus, Trash2, X, ImagePlus, ChevronLeft, ChevronRight, Image as ImageIcon, Heart } from 'lucide-react';
 import { EditModeToggle } from './EditModeToggle';
+import { GalleryGridSkeleton } from './SectionSkeletons';
 import { toast } from 'sonner';
 
 export const GallerySection = () => {
@@ -86,9 +87,13 @@ export const GallerySection = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-pulse text-primary">Loading gallery...</div>
-      </div>
+      <section className="animate-fade-up">
+        <h1 className="section-title mb-6 border-b-0 pb-0">
+          <ImageIcon className="inline-block w-7 h-7 mr-2 text-primary" />
+          Gallery
+        </h1>
+        <GalleryGridSkeleton />
+      </section>
     );
   }
 
