@@ -1,51 +1,50 @@
 
 
-# Plan: Exam Countdown Timer
+# Plan: Exam Suggestion Section
 
 ## যা করা হবে
-Dashboard এর Home page এ পরবর্তী exam এর countdown timer দেখাবে — দিন, ঘণ্টা, মিনিট, সেকেন্ড সহ real-time countdown। Admin/CR রা exam যোগ/মুছতে পারবে।
+প্রতিটি course এর জন্য exam suggestion files (PDF/links) upload ও share করার একটি section তৈরি হবে। Admin/CR রা suggestion যোগ করতে পারবে, students download করতে পারবে।
 
 ## Technical Changes
 
-### 1. Database: `exams` table তৈরি করা (migration)
+### 1. Database: `exam_suggestions` table (migration)
 ```sql
-CREATE TABLE public.exams (
+CREATE TABLE public.exam_suggestions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  course_name text NOT NULL,
   title text NOT NULL,
-  exam_date timestamptz NOT NULL,
-  subject text,
-  location text,
+  file_url text,
+  link_url text,
+  description text,
   created_by uuid REFERENCES auth.users(id),
   created_at timestamptz DEFAULT now()
 );
-ALTER TABLE public.exams ENABLE ROW LEVEL SECURITY;
--- Everyone can view
-CREATE POLICY "Exams viewable by everyone" ON public.exams FOR SELECT USING (true);
--- Admins can manage
-CREATE POLICY "Admins can manage exams" ON public.exams FOR ALL USING (has_permission(auth.uid(), 'academic'));
+ALTER TABLE public.exam_suggestions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Everyone can view suggestions" ON public.exam_suggestions FOR SELECT USING (true);
+CREATE POLICY "Admins can manage suggestions" ON public.exam_suggestions FOR ALL USING (has_permission(auth.uid(), 'academic'));
 ```
 
-### 2. নতুন hook: `src/hooks/useExams.ts`
-- `useExams()` — সব upcoming exams fetch করবে (date > now), sorted by date ascending
-- `useAddExam()` — নতুন exam যোগ করা
-- `useDeleteExam()` — exam মুছে ফেলা
+Storage bucket for suggestion PDFs:
+```sql
+INSERT INTO storage.buckets (id, name, public) VALUES ('exam-suggestions', 'exam-suggestions', true);
+```
+With RLS for upload by admins and public read.
 
-### 3. নতুন component: `ExamCountdown` (HomeSection এর ভিতরে)
-- পরবর্তী exam (earliest upcoming) এর countdown দেখাবে
-- `useState` + `setInterval` (1 সেকেন্ড) দিয়ে real-time countdown
-- দিন | ঘণ্টা | মিনিট | সেকেন্ড — 4টি box এ দেখাবে
-- Exam title ও subject দেখাবে
-- Exam শেষ হলে পরের exam এ switch হবে
-- কোনো exam না থাকলে "No upcoming exams" message
+### 2. New hook: `src/hooks/useExamSuggestions.ts`
+- `useExamSuggestions()` — fetch all suggestions, grouped by course
+- `useAddExamSuggestion()` — add new suggestion (file upload + link)
+- `useDeleteExamSuggestion()` — delete suggestion
 
-### 4. HomeSection এ integrate করা
-- Latest Notice এর পরে, Bus Schedule এর আগে countdown card বসবে
-- Admin দের জন্য "Add Exam" button ও form থাকবে
-- Design: gradient card, bold countdown numbers, pulse animation on urgency (< 24 hours)
+### 3. Academic Section এ নতুন "Exam Suggestions" sub-section যোগ করা
+- AcademicSection এ Courses ও Resources এর পরে "Exam Suggestions" section থাকবে
+- Course-wise grouped cards — প্রতিটি course এর নিচে suggestion list
+- প্রতিটি suggestion এ: title, description, download button (PDF) বা external link button
+- Admin/CR: "Add Suggestion" form — course select, title, description, file upload বা link input
+- EditModeToggle দিয়ে admin form toggle হবে (existing pattern follow)
 
-## Design
-- Card with exam icon (📝), title, subject
-- 4 boxes: Days | Hours | Minutes | Seconds — bold monospace numbers
-- < 24 hours হলে red/urgent color scheme
-- Admin: simple form — title, subject, date/time, location
+### 4. Design
+- Course name header সহ grouped layout
+- File icon + title + download/link button per item
+- PDF upload: Supabase storage bucket এ upload হবে, public URL generate হবে
+- Clean card-based design matching existing AcademicSection style
 
