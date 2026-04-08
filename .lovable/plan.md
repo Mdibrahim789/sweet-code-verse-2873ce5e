@@ -1,33 +1,47 @@
 
-# Plan: Mobile Bottom Tab Navigation Bar
 
-WhatsApp-style bottom navigation bar যোগ করা হবে যেটা শুধু mobile view তে দেখাবে।
+# Plan: PWA Support যোগ করা
 
-## What will be built
-- একটি fixed bottom navigation bar যেটা 5টি tab দেখাবে: **Home, Academic, Notices, Bus, More**
-- "More" tab এ ক্লিক করলে একটি popup/sheet ওপেন হবে বাকি sections দেখানোর জন্য (Students, Faculty, Attendance, Polls, Gallery, About, Admin, Profile)
-- Active tab highlighted হবে primary color দিয়ে
-- শুধু mobile (`lg:hidden`) এ দেখাবে, desktop এ sidebar থাকবে
+## সংক্ষেপে
+App টি PWA (Progressive Web App) হিসেবে সেটআপ করা হবে যাতে মোবাইলে "Add to Home Screen" এর মাধ্যমে install করা যায়, offline এ কাজ করে, এবং splash screen ও app icon দেখায়।
 
-## Files to create/modify
+## গুরুত্বপূর্ণ সতর্কতা
+- PWA features (install prompt, offline support) শুধুমাত্র **published version** এ কাজ করবে, Lovable editor preview তে কাজ করবে না
+- Editor preview তে service worker disable থাকবে যাতে development এ কোনো সমস্যা না হয়
 
-### 1. Create `src/components/dashboard/BottomTabBar.tsx`
-- 5 tabs: Home (`/home`), Academic (`/academic`), Notices (`/notices`), Bus (`/bus`), More (opens sheet)
-- Icons: Home, BookOpen, Bell, Bus, MoreHorizontal
-- Active state detection via `useLocation`
-- "More" tab opens a Sheet with remaining nav items
-- Fixed bottom, z-50, glass-morphism background matching sidebar theme
+## যা করা হবে
 
-### 2. Modify `src/components/dashboard/DashboardLayout.tsx`
-- Import and render `<BottomTabBar />` inside the layout
-- Add bottom padding to main content area on mobile to avoid overlap (`pb-20` on mobile)
+### 1. `vite-plugin-pwa` install করা
+- Package install: `vite-plugin-pwa`
 
-### 3. Modify `src/index.css`
-- Add safe-area-inset support for iOS notch devices (`padding-bottom: env(safe-area-inset-bottom)`)
+### 2. PWA Icons তৈরি করা
+- `public/` folder এ PWA icons তৈরি করা (192x192, 512x512 px) — SVG-based generated icons
 
-## Design details
-- Height: ~64px + safe area
-- Background: semi-transparent sidebar color with backdrop blur
-- Active tab: primary color icon + label, inactive: muted
-- Smooth transition on active state
-- Sheet for "More" will list remaining items with icons, same style as sidebar
+### 3. `vite.config.ts` আপডেট করা
+- `VitePWA` plugin যোগ করা manifest config সহ:
+  - App name, short name, description
+  - Theme color, background color
+  - Icons (192x192, 512x512)
+  - `display: "standalone"`
+  - `registerType: "autoUpdate"`
+  - `devOptions: { enabled: false }` — preview তে disable
+  - `navigateFallbackDenylist: [/^\/~oauth/]`
+
+### 4. `src/main.tsx` আপডেট করা
+- iframe/preview host detection guard যোগ করা
+- Preview/iframe context এ service worker unregister করা
+
+### 5. `index.html` আপডেট করা
+- Apple touch icon meta tags
+- `theme-color` meta tag
+- `apple-mobile-web-app-capable` ও `apple-mobile-web-app-status-bar-style` meta tags
+
+### 6. Manifest details
+- **App Name**: "49EveD EEE in UU" (বা সংক্ষেপে যা আছে)
+- **Theme Color**: App এর primary color
+- **Display**: standalone
+- **Start URL**: `/home`
+
+## ফলাফল
+Published site এ যেকোনো মোবাইল browser এ visit করলে "Add to Home Screen" option আসবে। Install করলে app এর মতো open হবে, splash screen দেখাবে, এবং offline এ cached pages দেখাবে।
+
