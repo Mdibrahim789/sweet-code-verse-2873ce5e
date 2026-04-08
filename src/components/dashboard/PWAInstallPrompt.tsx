@@ -40,11 +40,11 @@ export const PWAInstallPrompt = () => {
           <Download className="h-5 w-5 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground">অ্যাপ ইনস্টল করুন</p>
-          <p className="text-xs text-muted-foreground">হোম স্ক্রিনে যোগ করে দ্রুত অ্যাক্সেস পান</p>
+          <p className="text-sm font-medium text-foreground">Install App</p>
+          <p className="text-xs text-muted-foreground">Add to home screen for quick access</p>
         </div>
         <Button size="sm" onClick={handleInstall} className="shrink-0">
-          ইনস্টল
+          Install
         </Button>
         <button onClick={handleDismiss} className="shrink-0 text-muted-foreground hover:text-foreground p-1">
           <X className="h-4 w-4" />
