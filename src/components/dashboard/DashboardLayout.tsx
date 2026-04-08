@@ -7,6 +7,7 @@ import { MobileHeader } from './MobileHeader';
 import { AuthModal } from './AuthModal';
 import { GuestRestrictedContent } from './GuestRestrictedContent';
 import { BottomTabBar } from './BottomTabBar';
+import { PWAInstallPrompt } from './PWAInstallPrompt';
 
 // Public paths accessible without login
 const PUBLIC_PATHS = ['/bus', '/about'];
