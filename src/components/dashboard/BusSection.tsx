@@ -351,7 +351,6 @@ export const BusSection = () => {
       </div>
     );
   }
-  }
 
   return (
     <div className="space-y-6">
