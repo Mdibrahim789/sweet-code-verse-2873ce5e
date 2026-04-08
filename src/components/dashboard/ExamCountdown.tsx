@@ -120,7 +120,7 @@ export const ExamCountdown = () => {
         <CardContent>
           {!nextExam ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              কোনো আসন্ন পরীক্ষা নেই ✨
+              No upcoming exams ✨
             </p>
           ) : (
             <div className="space-y-4">
