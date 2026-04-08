@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Bell, BellOff, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -21,7 +21,7 @@ const isDismissed = () => {
 
 export const NotificationPrompt = () => {
   const { user } = useAuth();
-  const { isSubscribed, isLoading, subscribe, unsubscribe, permission } = usePushNotifications();
+  const { isSubscribed, isLoading, subscribe, permission } = usePushNotifications();
   const [dismissed, setDismissed] = useState(() => isDismissed());
 
   const handleDismiss = () => {
@@ -39,7 +39,7 @@ export const NotificationPrompt = () => {
   };
 
   // Don't show if not logged in, loading, already subscribed, or dismissed
-  if (!user || isLoading || isSubscribed || dismissed || permission === 'denied') {
+  if (!user || isLoading || isSubscribed || dismissed || permission === 'denied' || permission === 'granted') {
     return null;
   }
 
