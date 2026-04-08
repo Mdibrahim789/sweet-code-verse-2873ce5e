@@ -1,6 +1,7 @@
-import { Zap, Users, BookOpen, Bell, ArrowRight, Eye } from 'lucide-react';
+import { Zap, Users, BookOpen, Bell, ArrowRight, Eye, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { usePWAInstall } from '@/hooks/usePWAInstall';
 
 interface LandingPageProps {
   onLoginClick: () => void;
