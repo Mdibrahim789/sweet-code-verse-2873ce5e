@@ -1,24 +1,26 @@
 
-# Plan: PWA Install Button যোগ করা
+# Plan: PWA Install Pop-up
 
 ## যা করা হবে
-একটি "Install App" বাটন যোগ করা হবে যেটা `beforeinstallprompt` event ব্যবহার করে ব্রাউজারের native install prompt trigger করবে।
+App install করা না থাকলে একটি সুন্দর pop-up/banner দেখাবে যেটা user কে app install করতে উৎসাহিত করবে। এটি `usePWAInstall` hook ব্যবহার করবে।
 
 ## Technical Changes
 
-### 1. `src/hooks/usePWAInstall.ts` — নতুন hook তৈরি
-- `beforeinstallprompt` event listen করবে
-- `isInstallable` state ও `promptInstall()` function expose করবে
-- App already installed থাকলে বাটন hide হবে (`display-mode: standalone` check)
+### 1. নতুন component তৈরি: `src/components/dashboard/PWAInstallPrompt.tsx`
+- Fixed position bottom-এ (bottom tab bar এর উপরে) একটি card/banner দেখাবে
+- "Install App" button থাকবে যেটা native install prompt trigger করবে
+- Close/dismiss button থাকবে — dismiss করলে `localStorage` তে save হবে যাতে বারবার না দেখায় (৭ দিন পর আবার দেখাবে)
+- শুধু তখনই দেখাবে যখন:
+  - App installable (`isInstallable === true`)
+  - User আগে dismiss করেনি (বা ৭ দিন পার হয়ে গেছে)
+  - App standalone mode তে নেই
+- WhatsApp-style notification card design — icon, message, action button
 
-### 2. `src/components/dashboard/MobileHeader.tsx` — Install বাটন যোগ করা
-- Mobile header এ একটি ছোট install icon button দেখাবে (Download icon)
-- শুধু তখনই দেখাবে যখন app installable (`isInstallable === true`)
-- Already installed হলে বা desktop browser এ support না থাকলে বাটন hide থাকবে
+### 2. `DashboardLayout.tsx` এ PWAInstallPrompt যোগ করা
+- `<PWAInstallPrompt />` component render করা layout এ
 
-### 3. `src/pages/LandingPage.tsx` — Landing page এও install option
-- Hero section এ বা header এ install button দেখাবে যখন available
-
-## গুরুত্বপূর্ণ
-- Install prompt শুধু published site এ কাজ করবে (preview তে কাজ করবে না)
-- Chrome/Edge/Samsung Browser এ কাজ করবে, Safari তে "Add to Home Screen" manually করতে হবে
+## Design
+- Card style pop-up, bottom-এ fixed (mobile bottom tab এর উপরে)
+- Download icon + "অ্যাপ ইনস্টল করুন" text + "ইনস্টল" button + close button
+- Subtle animation (fade-up)
+- Auto-dismiss after install
