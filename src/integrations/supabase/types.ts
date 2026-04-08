@@ -211,6 +211,36 @@ export type Database = {
         }
         Relationships: []
       }
+      exams: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          exam_date: string
+          id: string
+          location: string | null
+          subject: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          exam_date: string
+          id?: string
+          location?: string | null
+          subject?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          exam_date?: string
+          id?: string
+          location?: string | null
+          subject?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       faculty: {
         Row: {
           avatar_url: string | null

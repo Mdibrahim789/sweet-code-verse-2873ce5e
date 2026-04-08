@@ -6,6 +6,7 @@ import { useNotices } from '@/hooks/useNotices';
 import { usePolls, usePollVotes, useVote } from '@/hooks/usePolls';
 import { useGallery } from '@/hooks/useGallery';
 import { useBusLocations, useBusSchedules } from '@/hooks/useBus';
+import { ExamCountdown } from './ExamCountdown';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { cn } from '@/lib/utils';
@@ -519,7 +520,10 @@ export const HomeSection = () => {
         </div>
       )}
 
-      {/* 2. Bus Schedule Preview */}
+      {/* 2. Exam Countdown */}
+      <ExamCountdown />
+
+      {/* 3. Bus Schedule Preview */}
       <BusSchedulePreview onNavigate={() => navigate('/bus')} />
 
       {/* 3. Class Routines */}
