@@ -58,7 +58,7 @@ export const useUpdateProfile = () => {
   const { refreshProfile } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<Profile> & { id: string }) => {
+    mutationFn: async ({ id, role, ...updates }: Partial<Profile> & { id: string }) => {
       const { error } = await supabase
         .from('profiles')
         .update(updates)
