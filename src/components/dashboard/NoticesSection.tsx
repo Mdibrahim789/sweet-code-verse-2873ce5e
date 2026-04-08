@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { SendNotificationCheckbox } from './SendNotificationCheckbox';
 import { EditModeToggle } from './EditModeToggle';
+import { NotificationToggle } from './NotificationPrompt';
 import { CardListSkeleton } from './SectionSkeletons';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -44,7 +45,7 @@ export const NoticesSection = () => {
       
       if (sendPushNotification && isMaster()) {
         await sendNotification({
-          title: `📢 নতুন নোটিশ – 49 D EEE`,
+          title: `📢 New Notice – 49 D EEE`,
           message: formData.title,
           url: window.location.origin,
           data: { type: 'notice', date: formData.date }
@@ -85,9 +86,12 @@ export const NoticesSection = () => {
     <div className="animate-fade-up">
       <div className="flex items-center justify-between mb-4">
         <h2 className="section-title mb-0">🔔 Notice Board</h2>
-        {canEdit && (
-          <EditModeToggle isEditMode={isEditMode} onToggle={() => setIsEditMode(!isEditMode)} />
-        )}
+        <div className="flex items-center gap-2">
+          <NotificationToggle />
+          {canEdit && (
+            <EditModeToggle isEditMode={isEditMode} onToggle={() => setIsEditMode(!isEditMode)} />
+          )}
+        </div>
       </div>
 
       {canEdit && isEditMode && (

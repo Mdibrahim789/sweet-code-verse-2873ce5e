@@ -8,6 +8,7 @@ import { AuthModal } from './AuthModal';
 import { GuestRestrictedContent } from './GuestRestrictedContent';
 import { BottomTabBar } from './BottomTabBar';
 import { PWAInstallPrompt } from './PWAInstallPrompt';
+import { NotificationPrompt } from './NotificationPrompt';
 
 // Public paths accessible without login
 const PUBLIC_PATHS = ['/bus', '/about'];
@@ -81,6 +82,7 @@ export const DashboardLayout = () => {
 
       <BottomTabBar />
       <PWAInstallPrompt />
+      <NotificationPrompt />
 
       {/* Auth Modal - Always mounted at root level */}
       <AuthModal open={showAuthModal} onOpenChange={handleAuthModalChange} />
