@@ -59,6 +59,15 @@ export const StudentsSection = () => {
     return user?.id === profile.user_id;
   };
 
+  if (isLoading) {
+    return (
+      <div className="animate-fade-up">
+        <h2 className="section-title mb-6">👥 Student Profiles</h2>
+        <StudentListSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-up">
       <div className="flex items-center justify-between mb-6">

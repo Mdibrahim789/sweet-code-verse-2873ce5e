@@ -72,6 +72,15 @@ export const NoticesSection = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="animate-fade-up">
+        <h2 className="section-title mb-4">🔔 Notice Board</h2>
+        <CardListSkeleton count={4} lines={2} />
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-up">
       <div className="flex items-center justify-between mb-4">

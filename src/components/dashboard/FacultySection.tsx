@@ -60,7 +60,7 @@ const initialFormData: FacultyFormData = {
 
 export const FacultySection = () => {
   const { hasPermission } = useAuth();
-  const { data: faculty = [] } = useFaculty();
+  const { data: faculty = [], isLoading } = useFaculty();
   const addFaculty = useAddFaculty();
   const updateFaculty = useUpdateFaculty();
   const deleteFaculty = useDeleteFaculty();

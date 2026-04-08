@@ -81,7 +81,7 @@ const PollCard = ({ poll, isEditMode }: { poll: { id: string; question: string; 
 
 export const PollsSection = () => {
   const { hasPermission } = useAuth();
-  const { data: polls = [] } = usePolls();
+  const { data: polls = [], isLoading } = usePolls();
   const addPoll = useAddPoll();
 
   const [formData, setFormData] = useState({

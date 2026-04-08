@@ -16,8 +16,8 @@ import autoTable from 'jspdf-autotable';
 
 export const AttendanceSection = () => {
   const { hasPermission, user, profile } = useAuth();
-  const { data: attendance = [] } = useAttendance();
-  const { data: profiles = [] } = useProfiles();
+  const { data: attendance = [], isLoading: attendanceLoading } = useAttendance();
+  const { data: profiles = [], isLoading: profilesLoading } = useProfiles();
   const addAttendance = useAddAttendance();
   const updateAttendance = useUpdateAttendance();
   const deleteAttendance = useDeleteAttendance();

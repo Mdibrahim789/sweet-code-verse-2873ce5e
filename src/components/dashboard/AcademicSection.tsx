@@ -88,6 +88,17 @@ export const AcademicSection = () => {
     }
   };
 
+  const isLoading = coursesLoading || resourcesLoading || suggestionsLoading;
+
+  if (isLoading) {
+    return (
+      <div className="animate-fade-up">
+        <h2 className="section-title mb-4">📘 Academic Resources</h2>
+        <AcademicSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-up">
       <div className="flex items-center justify-between mb-4">
