@@ -80,6 +80,7 @@ export const DashboardLayout = () => {
       </main>
 
       <BottomTabBar />
+      <PWAInstallPrompt />
 
       {/* Auth Modal - Always mounted at root level */}
       <AuthModal open={showAuthModal} onOpenChange={handleAuthModalChange} />
