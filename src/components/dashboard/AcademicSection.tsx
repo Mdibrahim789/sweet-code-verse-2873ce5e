@@ -244,6 +244,53 @@ export const AcademicSection = () => {
           <p className="text-muted-foreground text-center py-4">No resources added yet</p>
         )}
       </div>
+
+      {/* Exam Suggestions */}
+      <h3 className="text-lg font-semibold mb-3 mt-8">📝 Exam Suggestions</h3>
+      <div className="space-y-5">
+        {Object.keys(groupedSuggestions).length === 0 && (
+          <p className="text-muted-foreground text-center py-4">No exam suggestions yet</p>
+        )}
+        {Object.entries(groupedSuggestions).map(([courseName, items]) => (
+          <div key={courseName}>
+            <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-2">{courseName}</h4>
+            <div className="space-y-2">
+              {items.map((s) => (
+                <Card key={s.id} className="p-4 flex items-center justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold truncate">{s.title}</p>
+                    {s.description && <p className="text-sm text-muted-foreground line-clamp-2">{s.description}</p>}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {s.file_url && (
+                      <a href={s.file_url} target="_blank" rel="noopener noreferrer">
+                        <Button variant="outline" size="sm">
+                          <Download className="w-4 h-4 mr-1" /> PDF
+                        </Button>
+                      </a>
+                    )}
+                    {s.link_url && (
+                      <a href={s.link_url} target="_blank" rel="noopener noreferrer">
+                        <Button variant="outline" size="sm">
+                          <Link className="w-4 h-4 mr-1" /> Link
+                        </Button>
+                      </a>
+                    )}
+                    {canEdit && isEditMode && (
+                      <button 
+                        onClick={() => deleteSuggestion.mutate(s.id)}
+                        className="text-destructive hover:text-destructive/80"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
