@@ -496,6 +496,16 @@ export const HomeSection = () => {
     </div>
   );
 
+  const isLoading = routinesLoading && noticesLoading && pollsLoading;
+
+  if (isLoading) {
+    return (
+      <div className="animate-fade-up space-y-6">
+        <HomeSectionSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-up space-y-6">
       {/* 1. Latest Notice - First (encrypted for guests) */}
