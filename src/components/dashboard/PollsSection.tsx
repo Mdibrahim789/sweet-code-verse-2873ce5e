@@ -108,6 +108,18 @@ export const PollsSection = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="animate-fade-up">
+        <h2 className="section-title mb-4">🗳️ Voting & Polls</h2>
+        <div className="space-y-4">
+          <PollSkeleton />
+          <PollSkeleton />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-up">
       <div className="flex items-center justify-between mb-4">

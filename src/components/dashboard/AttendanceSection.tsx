@@ -217,6 +217,17 @@ export const AttendanceSection = () => {
     toast.success('PDF downloaded!');
   };
 
+  const isLoading = attendanceLoading || profilesLoading;
+
+  if (isLoading) {
+    return (
+      <div className="animate-fade-up">
+        <h2 className="section-title mb-4">📝 Attendance</h2>
+        <AttendanceSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-up">
       <div className="flex items-center justify-between mb-4">

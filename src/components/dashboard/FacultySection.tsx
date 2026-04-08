@@ -243,6 +243,15 @@ export const FacultySection = () => {
     </div>
   );
 
+  if (isLoading) {
+    return (
+      <div className="animate-fade-up">
+        <h2 className="section-title mb-4">👨‍🏫 Faculty Members</h2>
+        <FacultyListSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-up">
       <div className="flex items-center justify-between mb-4">
