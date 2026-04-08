@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { Trash2, FileText, ExternalLink } from 'lucide-react';
+import { useState, useRef, useMemo } from 'react';
+import { Trash2, FileText, ExternalLink, Upload, Download, Link } from 'lucide-react';
 import { useCourses, useResources, useAddCourse, useAddResource, useDeleteCourse, useDeleteResource } from '@/hooks/useAcademic';
+import { useExamSuggestions, useAddExamSuggestion, useDeleteExamSuggestion } from '@/hooks/useExamSuggestions';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
 import { EditModeToggle } from './EditModeToggle';
 import { toast } from 'sonner';
 
