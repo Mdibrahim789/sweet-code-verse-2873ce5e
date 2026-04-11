@@ -140,9 +140,9 @@ export const ExamCountdown = () => {
               >
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-muted-foreground">1.</span>
-                  <h3 className="font-bold text-lg text-foreground flex-1">{nextExam.title}</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground flex-1">{nextExam.title}</h3>
                   {nextExam.subject && (
-                    <Badge variant="secondary" className="text-xs">{nextExam.subject}</Badge>
+                    <Badge variant="secondary" className="text-sm font-bold bg-primary/10 text-primary border border-primary/30">{nextExam.subject}</Badge>
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1 ml-5">
@@ -169,9 +169,9 @@ export const ExamCountdown = () => {
                       >
                         <div className="flex items-center gap-2 flex-1 min-w-0">
                           <span className="text-xs font-bold text-muted-foreground">{idx + 2}.</span>
-                          <span className="text-foreground truncate">{exam.title}</span>
+                          <span className="text-muted-foreground text-xs truncate">{exam.title}</span>
                           {exam.subject && (
-                            <Badge variant="outline" className="text-[10px] shrink-0">{exam.subject}</Badge>
+                            <Badge variant="outline" className="text-xs font-bold bg-primary/10 text-primary border-primary/30 shrink-0">{exam.subject}</Badge>
                           )}
                         </div>
                         <div className="flex items-center gap-2 shrink-0 ml-2">
