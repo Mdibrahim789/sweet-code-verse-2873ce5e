@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CalendarClock, Plus, Trash2, MapPin, BookOpen, AlertTriangle } from 'lucide-react';
-import { useExams, useAddExam, useDeleteExam } from '@/hooks/useExams';
+import { useExams, useAddExam, useDeleteExam, Exam } from '@/hooks/useExams';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,14 @@ const CountdownBox = ({ value, label, urgent }: { value: number; label: string; 
   </div>
 );
 
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+const formatDateTime = (date: string) => {
+  const d = new Date(date);
+  return `${d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })} — ${d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+};
+
 export const ExamCountdown = () => {
   const { data: exams = [], isLoading } = useExams();
   const { hasPermission } = useAuth();
@@ -33,14 +41,13 @@ export const ExamCountdown = () => {
 
   const [now, setNow] = useState(new Date());
   const [showAddForm, setShowAddForm] = useState(false);
+  const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
   const [form, setForm] = useState({ title: '', exam_date: '', subject: '', location: '' });
 
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
-
-  const nextExam = exams[0];
 
   const getCountdown = (targetDate: string) => {
     const diff = new Date(targetDate).getTime() - now.getTime();
@@ -80,6 +87,7 @@ export const ExamCountdown = () => {
       try {
         await deleteExam.mutateAsync(id);
         toast.success('Exam deleted');
+        if (selectedExam?.id === id) setSelectedExam(null);
       } catch {
         toast.error('Failed to delete');
       }
@@ -88,8 +96,11 @@ export const ExamCountdown = () => {
 
   if (isLoading) return null;
 
+  const nextExam = exams[0];
   const countdown = nextExam ? getCountdown(nextExam.exam_date) : null;
   const isUrgent = countdown ? countdown.total < 24 * 60 * 60 * 1000 : false;
+  const selectedCountdown = selectedExam ? getCountdown(selectedExam.exam_date) : null;
+  const selectedUrgent = selectedCountdown ? selectedCountdown.total < 24 * 60 * 60 * 1000 : false;
 
   return (
     <div>
@@ -119,30 +130,23 @@ export const ExamCountdown = () => {
         </CardHeader>
         <CardContent>
           {!nextExam ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              No upcoming exams ✨
-            </p>
+            <p className="text-sm text-muted-foreground text-center py-4">No upcoming exams ✨</p>
           ) : (
             <div className="space-y-4">
-              <div>
-                <h3 className="font-bold text-lg text-foreground">{nextExam.title}</h3>
-                <div className="flex flex-wrap gap-2 mt-1">
+              {/* Next exam — clickable */}
+              <div
+                className="cursor-pointer hover:bg-accent/30 rounded-lg p-2 -mx-2 transition-colors"
+                onClick={() => setSelectedExam(nextExam)}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-muted-foreground">1.</span>
+                  <h3 className="font-bold text-lg text-foreground flex-1">{nextExam.title}</h3>
                   {nextExam.subject && (
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <BookOpen className="w-3 h-3" /> {nextExam.subject}
-                    </span>
-                  )}
-                  {nextExam.location && (
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <MapPin className="w-3 h-3" /> {nextExam.location}
-                    </span>
+                    <Badge variant="secondary" className="text-xs">{nextExam.subject}</Badge>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  📅 {new Date(nextExam.exam_date).toLocaleString('en-US', {
-                    dateStyle: 'long',
-                    timeStyle: 'short',
-                  })}
+                <p className="text-xs text-muted-foreground mt-1 ml-5">
+                  📅 {formatDateTime(nextExam.exam_date)}
                 </p>
               </div>
 
@@ -157,15 +161,26 @@ export const ExamCountdown = () => {
                 <div className="border-t border-border/50 pt-3 mt-3">
                   <p className="text-xs text-muted-foreground mb-2">More upcoming exams:</p>
                   <div className="space-y-1.5">
-                    {exams.slice(1, 4).map(exam => (
-                      <div key={exam.id} className="flex items-center justify-between text-sm">
-                        <span className="text-foreground truncate flex-1">{exam.title}</span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground whitespace-nowrap">
-                            {new Date(exam.exam_date).toLocaleDateString('en-US')}
-                          </span>
+                    {exams.slice(1, 4).map((exam, idx) => (
+                      <div
+                        key={exam.id}
+                        className="flex items-center justify-between text-sm cursor-pointer hover:bg-accent/30 rounded-md px-2 py-1 -mx-2 transition-colors"
+                        onClick={() => setSelectedExam(exam)}
+                      >
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <span className="text-xs font-bold text-muted-foreground">{idx + 2}.</span>
+                          <span className="text-foreground truncate">{exam.title}</span>
+                          {exam.subject && (
+                            <Badge variant="outline" className="text-[10px] shrink-0">{exam.subject}</Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0 ml-2">
+                          <span className="text-xs text-muted-foreground">{formatDate(exam.exam_date)}</span>
                           {canEdit && (
-                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => handleDelete(exam.id)}>
+                            <Button
+                              variant="ghost" size="sm" className="h-6 w-6 p-0"
+                              onClick={(e) => { e.stopPropagation(); handleDelete(exam.id); }}
+                            >
                               <Trash2 className="w-3 h-3 text-destructive" />
                             </Button>
                           )}
@@ -178,8 +193,7 @@ export const ExamCountdown = () => {
 
               {canEdit && (
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant="ghost" size="sm"
                   className="w-full text-xs text-destructive hover:text-destructive"
                   onClick={() => handleDelete(nextExam.id)}
                 >
@@ -191,38 +205,80 @@ export const ExamCountdown = () => {
         </CardContent>
       </Card>
 
+      {/* Add Exam Dialog */}
       <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Exam</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>Add New Exam</DialogTitle></DialogHeader>
           <form onSubmit={handleAdd} className="space-y-3">
-            <Input
-              placeholder="Exam name (e.g. Mid Term)"
-              value={form.title}
-              onChange={e => setForm({ ...form, title: e.target.value })}
-              required
-            />
-            <Input
-              type="datetime-local"
-              value={form.exam_date}
-              onChange={e => setForm({ ...form, exam_date: e.target.value })}
-              required
-            />
-            <Input
-              placeholder="Subject (optional)"
-              value={form.subject}
-              onChange={e => setForm({ ...form, subject: e.target.value })}
-            />
-            <Input
-              placeholder="Location (optional)"
-              value={form.location}
-              onChange={e => setForm({ ...form, location: e.target.value })}
-            />
+            <Input placeholder="Exam name (e.g. Mid Term)" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required />
+            <Input type="datetime-local" value={form.exam_date} onChange={e => setForm({ ...form, exam_date: e.target.value })} required />
+            <Input placeholder="Subject (optional)" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} />
+            <Input placeholder="Location (optional)" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} />
             <Button type="submit" className="w-full" disabled={addExam.isPending}>
               {addExam.isPending ? 'Adding...' : 'Add Exam'}
             </Button>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Exam Detail Dialog */}
+      <Dialog open={!!selectedExam} onOpenChange={(open) => !open && setSelectedExam(null)}>
+        <DialogContent>
+          {selectedExam && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <CalendarClock className="w-5 h-5 text-primary" />
+                  {selectedExam.title}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  {selectedExam.subject && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <BookOpen className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Subject:</span>
+                      <Badge variant="secondary">{selectedExam.subject}</Badge>
+                    </div>
+                  )}
+                  {selectedExam.location && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Location:</span>
+                      <span className="text-foreground">{selectedExam.location}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 text-sm">
+                    <CalendarClock className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">Date:</span>
+                    <span className="text-foreground">{formatDateTime(selectedExam.exam_date)}</span>
+                  </div>
+                </div>
+
+                {selectedCountdown && selectedCountdown.total > 0 && (
+                  <div className="flex justify-center gap-3">
+                    <CountdownBox value={selectedCountdown.days} label="Days" urgent={selectedUrgent} />
+                    <CountdownBox value={selectedCountdown.hours} label="Hours" urgent={selectedUrgent} />
+                    <CountdownBox value={selectedCountdown.minutes} label="Min" urgent={selectedUrgent} />
+                    <CountdownBox value={selectedCountdown.seconds} label="Sec" urgent={selectedUrgent} />
+                  </div>
+                )}
+
+                {selectedCountdown && selectedCountdown.total <= 0 && (
+                  <p className="text-center text-sm text-muted-foreground">This exam has already started or passed.</p>
+                )}
+
+                {canEdit && (
+                  <Button
+                    variant="destructive" size="sm" className="w-full"
+                    onClick={() => handleDelete(selectedExam.id)}
+                  >
+                    <Trash2 className="w-3 h-3 mr-1" /> Delete this exam
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>
