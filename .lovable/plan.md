@@ -1,29 +1,34 @@
 
 
-# Plan: Exam Countdown UI Improvements
+# Plan: Fix PWABuilder Issues in Web Manifest
 
-## Changes to `src/components/dashboard/ExamCountdown.tsx`
+Based on the PWABuilder report card, there are several manifest issues to fix:
 
-### 1. Serial numbering
-- Add serial numbers (1, 2, 3...) before each exam in the list — both the main exam and the "more upcoming" list
+## Issues from Screenshot
 
-### 2. Date format fix (DD/MM/YYYY)
-- Change date display from US format (MM/DD/YYYY) to DD/MM/YYYY format
-- Line 142: Change `toLocaleString('en-US', ...)` to `toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })`
-- Line 165: Same change for the upcoming exams list dates
+1. **Fix icon types** — Icons need proper `type` and possibly additional formats
+2. **Fix icon sizes** — Need more icon sizes (at least 48x48, 72x72, 96x96, 128x128, 144x144, 152x152, 192x192, 384x384, 512x512)
+3. **Add screenshots** — PWABuilder wants app screenshots for store listing
+4. **Add orientation** — Specify `"orientation": "portrait"` in manifest
+5. **Service worker** — Already handled by vite-plugin-pwa
 
-### 3. Click to show exam details
-- Add a `selectedExam` state to track which exam was clicked
-- Make each exam row clickable (cursor-pointer)
-- Show a Dialog/modal with full exam details (title, subject, date, location, countdown) when clicked
+## Changes
 
-### 4. Show exam type (title) and subject on the side
-- In the exam list, display the exam title on the left and the subject as a Badge on the right side
-- Both clickable to open the details modal
+### 1. Generate missing icon sizes
+- Use the existing `pwa-icon-512.png` to generate all required sizes (48, 72, 96, 128, 144, 152, 384) into `public/`
+
+### 2. Take app screenshots
+- Capture 2 screenshots of the app (mobile + desktop) and save to `public/screenshots/`
+
+### 3. Update `vite.config.ts` manifest
+- Add `orientation: "portrait"`
+- Add all icon sizes with correct `type: "image/png"`
+- Add `screenshots` array with the captured screenshots
+- Ensure `purpose` values are correct (separate entries for `"any"` and `"maskable"`)
 
 ### Technical Details
-- Single file edit: `src/components/dashboard/ExamCountdown.tsx`
-- Add `selectedExam` state (`Exam | null`)
-- New `ExamDetailDialog` section showing full details with countdown
-- All exams shown with format: `1. Final Exam | Physics — 15/04/2026`
+
+File to edit: `vite.config.ts` — expand the `manifest.icons` array and add `orientation` + `screenshots` fields.
+
+New icons generated via script from `pwa-icon-512.png` using ImageMagick.
 
