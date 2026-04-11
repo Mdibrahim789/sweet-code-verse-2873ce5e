@@ -1,34 +1,18 @@
 
+# Plan: Subject Name কে বেশি Highlight করা
 
-# Plan: Fix PWABuilder Issues in Web Manifest
+Exam countdown এ subject name কে exam title এর চেয়ে বেশি prominent করতে হবে।
 
-Based on the PWABuilder report card, there are several manifest issues to fix:
+## Changes to `src/components/dashboard/ExamCountdown.tsx`
 
-## Issues from Screenshot
+### 1. Main exam (line 141-146)
+- Title (`nextExam.title`): font size ছোট করা, lighter weight — `text-sm font-medium text-muted-foreground`
+- Subject badge: বড় করা, bold, primary color — `text-sm font-bold bg-primary/10 text-primary border-primary/30`
 
-1. **Fix icon types** — Icons need proper `type` and possibly additional formats
-2. **Fix icon sizes** — Need more icon sizes (at least 48x48, 72x72, 96x96, 128x128, 144x144, 152x152, 192x192, 384x384, 512x512)
-3. **Add screenshots** — PWABuilder wants app screenshots for store listing
-4. **Add orientation** — Specify `"orientation": "portrait"` in manifest
-5. **Service worker** — Already handled by vite-plugin-pwa
-
-## Changes
-
-### 1. Generate missing icon sizes
-- Use the existing `pwa-icon-512.png` to generate all required sizes (48, 72, 96, 128, 144, 152, 384) into `public/`
-
-### 2. Take app screenshots
-- Capture 2 screenshots of the app (mobile + desktop) and save to `public/screenshots/`
-
-### 3. Update `vite.config.ts` manifest
-- Add `orientation: "portrait"`
-- Add all icon sizes with correct `type: "image/png"`
-- Add `screenshots` array with the captured screenshots
-- Ensure `purpose` values are correct (separate entries for `"any"` and `"maskable"`)
+### 2. Upcoming exam list (line 170-175)
+- Title (`exam.title`): lighter — `text-muted-foreground text-xs`
+- Subject badge: bolder, bigger — `text-xs font-bold bg-primary/10 text-primary border-primary/30`
 
 ### Technical Details
-
-File to edit: `vite.config.ts` — expand the `manifest.icons` array and add `orientation` + `screenshots` fields.
-
-New icons generated via script from `pwa-icon-512.png` using ImageMagick.
-
+- Single file edit: `src/components/dashboard/ExamCountdown.tsx`
+- 4 lines changed across 2 sections
