@@ -24,6 +24,7 @@ export default defineConfig(({ mode }) => ({
         navigateFallbackDenylist: [/^\/~oauth/],
       },
       manifest: {
+        id: "/home",
         name: "49EveD EEE in UU",
         short_name: "49EveD",
         description: "49th Eveda EEE Department App - University of Uttara",
@@ -32,6 +33,7 @@ export default defineConfig(({ mode }) => ({
         display: "standalone",
         orientation: "portrait",
         start_url: "/home",
+        categories: ["education", "utilities"],
         icons: [
           { src: "/pwa-icon-48.png", sizes: "48x48", type: "image/png", purpose: "any" },
           { src: "/pwa-icon-72.png", sizes: "72x72", type: "image/png", purpose: "any" },
