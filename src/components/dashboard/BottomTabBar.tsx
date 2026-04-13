@@ -29,6 +29,8 @@ export const BottomTabBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const { isGuestMode, exitGuestMode } = useGuest();
 
   const isActive = (path: string) => location.pathname === path;
   const isMoreActive = MORE_ITEMS.some(item => isActive(item.path));
