@@ -96,6 +96,37 @@ export const BottomTabBar = () => {
               </button>
             ))}
           </div>
+          
+          <Separator className="my-2" />
+          
+          {user ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full border-destructive/50 text-destructive hover:bg-destructive/10 font-semibold"
+              onClick={async () => {
+                setSheetOpen(false);
+                await signOut();
+                navigate('/');
+              }}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </Button>
+          ) : isGuestMode ? (
+            <Button
+              size="sm"
+              className="w-full"
+              onClick={() => {
+                setSheetOpen(false);
+                exitGuestMode();
+                navigate('/');
+              }}
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              Login for Full Access
+            </Button>
+          ) : null}
         </SheetContent>
       </Sheet>
     </>
