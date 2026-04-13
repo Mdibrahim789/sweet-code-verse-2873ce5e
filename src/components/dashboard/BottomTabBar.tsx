@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, BookOpen, Bell, Bus, MoreHorizontal, Users, GraduationCap, ClipboardCheck, BarChart3, Image, Info, Shield, User } from 'lucide-react';
+import { Home, BookOpen, Bell, Bus, MoreHorizontal, Users, GraduationCap, ClipboardCheck, BarChart3, Image, Info, Shield, User, LogOut, LogIn } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { useAuth } from '@/contexts/AuthContext';
+import { useGuest } from '@/contexts/GuestContext';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 const TABS = [
   { label: 'Academic', icon: BookOpen, path: '/academic' },
