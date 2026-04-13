@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, BookOpen, Bell, Bus, MoreHorizontal, Users, GraduationCap, ClipboardCheck, BarChart3, Image, Info, Shield, User } from 'lucide-react';
+import { Home, BookOpen, Bell, Bus, MoreHorizontal, Users, GraduationCap, ClipboardCheck, BarChart3, Image, Info, Shield, User, LogOut, LogIn } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { useAuth } from '@/contexts/AuthContext';
+import { useGuest } from '@/contexts/GuestContext';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 const TABS = [
   { label: 'Academic', icon: BookOpen, path: '/academic' },
@@ -25,6 +29,8 @@ export const BottomTabBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const { isGuestMode, exitGuestMode } = useGuest();
 
   const isActive = (path: string) => location.pathname === path;
   const isMoreActive = MORE_ITEMS.some(item => isActive(item.path));
@@ -90,6 +96,37 @@ export const BottomTabBar = () => {
               </button>
             ))}
           </div>
+          
+          <Separator className="my-2" />
+          
+          {user ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full border-destructive/50 text-destructive hover:bg-destructive/10 font-semibold"
+              onClick={async () => {
+                setSheetOpen(false);
+                await signOut();
+                navigate('/');
+              }}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </Button>
+          ) : isGuestMode ? (
+            <Button
+              size="sm"
+              className="w-full"
+              onClick={() => {
+                setSheetOpen(false);
+                exitGuestMode();
+                navigate('/');
+              }}
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              Login for Full Access
+            </Button>
+          ) : null}
         </SheetContent>
       </Sheet>
     </>

@@ -1,6 +1,7 @@
 import { Zap, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export const MobileHeader = () => {
   const { isInstallable, promptInstall } = usePWAInstall();
@@ -11,12 +12,15 @@ export const MobileHeader = () => {
         <Zap className="w-5 h-5 text-primary" />
         <span className="font-bold">UU EEE</span>
       </div>
-      {isInstallable && (
-        <Button size="sm" variant="outline" onClick={promptInstall} className="gap-1.5 text-xs">
-          <Download className="w-4 h-4" />
-          Install
-        </Button>
-      )}
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
+        {isInstallable && (
+          <Button size="sm" variant="outline" onClick={promptInstall} className="gap-1.5 text-xs">
+            <Download className="w-4 h-4" />
+            Install
+          </Button>
+        )}
+      </div>
     </header>
   );
 };
