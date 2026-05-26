@@ -1,72 +1,32 @@
-## Goal
+## Plan: Add Tools Section
 
-Mobile header আর desktop sidebar এ একটা small badge দেখাবে current trimester ও season (যেমন `Summer '26 · T2`)। Master/CR admin panel থেকে এটা manage করা যাবে।
+### What to build
+A new **Tools** page in the portal listing external utilities for students. First entry: **UU Top Page** (https://uutoppage.pro.bd/) — Uttara University assignment/lab cover page generator.
 
-## Database (Supabase)
+### Changes
 
-নতুন একটা table `academic_terms`:
+1. **New component** `src/components/dashboard/ToolsSection.tsx`
+   - Grid of tool cards (responsive: 1 col mobile, 2 cols desktop)
+   - First card: UU Top Page
+     - Title: "UU Top Page"
+     - Description: "Generate print-ready assignment & lab report cover pages with official Uttara University templates."
+     - Icon: `FileText` (lucide-react)
+     - Badge: "External"
+     - Button "Open Tool" → opens https://uutoppage.pro.bd/ in new tab (`target="_blank"`, `rel="noopener noreferrer"`)
+   - Layout matches existing sections (header + cards using design tokens)
 
-- `season` — text (Spring / Summer / Fall)
-- `year` — integer (যেমন 2026)
-- `trimester_number` — integer (1, 2, বা 3)
-- `start_date` — date
-- `end_date` — date
-- `is_active` — boolean (একসাথে শুধু একটাই active থাকবে)
-- + standard id / created_at / updated_at / created_by
+2. **Routing** `src/pages/Index.tsx`
+   - Add `tools` to active section state and render `<ToolsSection />`
 
-**Access rules (plain English):**
-- যেকোনো visitor (authenticated বা guest) current/active term দেখতে পারবে
-- শুধু master role অথবা `academic` permission ওয়ালা CR/teacher এই term add/edit/delete করতে পারবে
+3. **Navigation**
+   - `src/components/dashboard/Sidebar.tsx` — add "Tools" item with `Wrench` icon
+   - `src/components/dashboard/BottomTabBar.tsx` — add "Tools" tab (if space; otherwise put under a "More" overflow if 5 tabs already exist — will verify on implementation)
 
-একটা trigger থাকবে যাতে নতুন কোনো term `is_active = true` করে set করলে আগের active term গুলো automatically `false` হয়ে যায় (একটাই active term guarantee)।
+4. **Skeleton loader** in `SectionSkeletons.tsx` for the Tools page
 
-## Frontend Changes
+### Out of scope
+- No backend changes, no DB tables — purely a frontend external-link directory
+- No auth/permission gating (visible to all logged-in users like other sections)
 
-### 1. New hook `src/hooks/useAcademicTerms.ts`
-- `useActiveTerm()` — current active term fetch করবে
-- `useAcademicTerms()` — সব terms list (admin panel এর জন্য)
-- `useUpsertTerm()`, `useDeleteTerm()`, `useSetActiveTerm()` — mutations
-
-### 2. New component `src/components/dashboard/TermBadge.tsx`
-Compact badge দেখাবে: `Summer '26 · T2` style. Active term না থাকলে কিছু render করবে না। Click করলে tooltip/popover এ full info (season, year, trimester, start–end date, কত days বাকি)।
-
-### 3. Placement
-- **MobileHeader.tsx** — logo এর পাশে badge insert
-- **Sidebar.tsx** — top section এ (logo এর নিচে) badge insert
-
-### 4. Admin Panel (`AdminSection.tsx`)
-নতুন একটা "Academic Terms" tab/card:
-- Active term দেখাবে highlight করে
-- Add new term form (season dropdown, year, trimester number, start/end date)
-- List of all terms (Set Active / Edit / Delete)
-
-## Technical Details
-
-```text
-academic_terms
-├── season: 'Spring' | 'Summer' | 'Fall'
-├── year: int
-├── trimester_number: 1 | 2 | 3
-├── start_date, end_date
-└── is_active (only one true at a time, enforced by trigger)
-```
-
-Badge format examples:
-- `Summer '26 · T2`
-- Tooltip: "Summer 2026 — 2nd Trimester · 45 days remaining (May 1 – Aug 31)"
-
-Files to create:
-- `src/hooks/useAcademicTerms.ts`
-- `src/components/dashboard/TermBadge.tsx`
-- `src/components/dashboard/AcademicTermsManager.tsx` (admin form/list)
-
-Files to edit:
-- `src/components/dashboard/MobileHeader.tsx` — add `<TermBadge />`
-- `src/components/dashboard/Sidebar.tsx` — add `<TermBadge />`
-- `src/components/dashboard/AdminSection.tsx` — mount the terms manager
-
-## Out of Scope (এখন না)
-
-- Home page এ big card / banner (পরে চাইলে add করা যাবে — হুক ready থাকবে)
-- Auto-rollover (term end হলে next term auto-active) — manual control রাখছি
-- Multiple parallel sessions (diploma vs regular)
+### Future-friendly
+Tool list will be defined as an array in `ToolsSection.tsx` so adding more tools later = one object entry.

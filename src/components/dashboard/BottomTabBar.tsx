@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, BookOpen, Bell, Bus, MoreHorizontal, Users, GraduationCap, ClipboardCheck, BarChart3, Image, Info, Shield, User, LogOut, LogIn } from 'lucide-react';
+import { Home, BookOpen, Bell, Bus, MoreHorizontal, Users, GraduationCap, ClipboardCheck, BarChart3, Image, Info, Shield, User, LogOut, LogIn, Wrench } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
@@ -20,6 +20,7 @@ const MORE_ITEMS = [
   { label: 'Attendance', icon: ClipboardCheck, path: '/attendance' },
   { label: 'Polls', icon: BarChart3, path: '/polls' },
   { label: 'Gallery', icon: Image, path: '/gallery' },
+  { label: 'Tools', icon: Wrench, path: '/tools' },
   { label: 'About', icon: Info, path: '/about' },
   { label: 'Admin', icon: Shield, path: '/admin' },
   { label: 'Profile', icon: User, path: '/profile' },
