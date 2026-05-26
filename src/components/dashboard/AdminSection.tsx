@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Crown, Key, Users, Trash2, Copy, Shield, UserPlus, GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
+import { AcademicTermsManager } from './AcademicTermsManager';
 
 const PERMISSIONS = [
   { id: 'routine', label: 'Routine' },
@@ -230,6 +231,10 @@ export const AdminSection = () => {
         <Crown className="w-8 h-8 text-primary" />
         <h2 className="text-2xl font-bold">Master Admin Panel</h2>
       </div>
+
+      {/* Academic Terms */}
+      <AcademicTermsManager />
+
 
       {/* Add Student Section */}
       <Card className="p-6 border-l-4 border-l-accent">
