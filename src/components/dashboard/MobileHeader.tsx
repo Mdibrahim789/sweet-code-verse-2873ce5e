@@ -16,7 +16,7 @@ export const MobileHeader = () => {
     <header className="lg:hidden sticky top-0 z-40 bg-sidebar text-sidebar-foreground px-4 py-3 flex items-center justify-between gap-2">
       <div className="flex items-center gap-2 min-w-0">
         <Zap className="w-5 h-5 text-primary shrink-0" />
-        <span className="font-bold">UU EEE</span>
+        <span className="font-bold">EEE 49D</span>
         <TermBadge compact className="ml-1" />
       </div>
       <div className="flex items-center gap-2">
