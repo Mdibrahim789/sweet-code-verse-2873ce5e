@@ -59,6 +59,45 @@ export type Database = {
         }
         Relationships: []
       }
+      academic_terms: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          end_date: string
+          id: string
+          is_active: boolean
+          season: string
+          start_date: string
+          trimester_number: number
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          end_date: string
+          id?: string
+          is_active?: boolean
+          season: string
+          start_date: string
+          trimester_number: number
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          season?: string
+          start_date?: string
+          trimester_number?: number
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
       attendance_records: {
         Row: {
           created_at: string
