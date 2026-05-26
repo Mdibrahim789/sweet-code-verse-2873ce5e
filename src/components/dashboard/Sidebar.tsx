@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Zap, Home, BookOpen, Users, GraduationCap, Bell, ClipboardCheck, Vote, X, Crown, Image, Bus, LogIn, Lock, Heart } from 'lucide-react';
+import { Zap, Home, BookOpen, Users, GraduationCap, Bell, ClipboardCheck, Vote, X, Crown, Image, Bus, LogIn, Lock, Heart, Wrench } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -27,6 +27,7 @@ const navItems: NavItem[] = [
   { path: '/attendance', label: 'Attendance', icon: <ClipboardCheck className="w-5 h-5" /> },
   { path: '/polls', label: 'Polls', icon: <Vote className="w-5 h-5" /> },
   { path: '/gallery', label: 'Gallery', icon: <Image className="w-5 h-5" /> },
+  { path: '/tools', label: 'Tools', icon: <Wrench className="w-5 h-5" /> },
   { path: '/bus', label: 'Bus Schedule', icon: <Bus className="w-5 h-5" /> },
   { path: '/about', label: 'Why I Built This', icon: <Heart className="w-5 h-5" /> },
   { path: '/admin', label: 'Admin Panel', icon: <Crown className="w-5 h-5" />, adminOnly: true },

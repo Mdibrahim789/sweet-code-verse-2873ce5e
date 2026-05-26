@@ -26,6 +26,7 @@ import { BusSection } from "@/components/dashboard/BusSection";
 import { AboutSection } from "@/components/dashboard/AboutSection";
 import { AdminSection } from "@/components/dashboard/AdminSection";
 import { ProfileSection } from "@/components/dashboard/ProfileSection";
+import { ToolsSection } from "@/components/dashboard/ToolsSection";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
                   <Route path="/about" element={<AboutSection />} />
                   <Route path="/admin" element={<AdminSection />} />
                   <Route path="/profile" element={<ProfileSection />} />
+                  <Route path="/tools" element={<ToolsSection />} />
                 </Route>
 
                 {/* 404 */}
