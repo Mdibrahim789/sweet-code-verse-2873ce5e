@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
+import { TermBadge } from './TermBadge';
 
 export const MobileHeader = () => {
   const { isInstallable, promptInstall } = usePWAInstall();
@@ -12,10 +13,11 @@ export const MobileHeader = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="lg:hidden sticky top-0 z-40 bg-sidebar text-sidebar-foreground px-4 py-3 flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <Zap className="w-5 h-5 text-primary" />
+    <header className="lg:hidden sticky top-0 z-40 bg-sidebar text-sidebar-foreground px-4 py-3 flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2 min-w-0">
+        <Zap className="w-5 h-5 text-primary shrink-0" />
         <span className="font-bold">UU EEE</span>
+        <TermBadge compact className="ml-1" />
       </div>
       <div className="flex items-center gap-2">
         <ThemeToggle />

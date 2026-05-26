@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { NotificationToggle } from './NotificationPrompt';
+import { TermBadge } from './TermBadge';
 
 type NavItem = {
   path: string;
@@ -89,12 +90,17 @@ export const Sidebar = ({ isOpen, onClose, onLoginClick, isGuestMode, onExitGues
         </button>
 
         {/* Brand */}
-        <div className="flex items-center justify-between mb-8">
-          <Link to="/home" className="flex items-center gap-3">
-            <Zap className="w-8 h-8 text-primary" />
-            <span className="text-2xl font-extrabold text-sidebar-foreground">UU EEE</span>
-          </Link>
-          <ThemeToggle />
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <Link to="/home" className="flex items-center gap-3">
+              <Zap className="w-8 h-8 text-primary" />
+              <span className="text-2xl font-extrabold text-sidebar-foreground">UU EEE</span>
+            </Link>
+            <ThemeToggle />
+          </div>
+          <div className="mt-3">
+            <TermBadge compact />
+          </div>
         </div>
 
         {/* Navigation */}
