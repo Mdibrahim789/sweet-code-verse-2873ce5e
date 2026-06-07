@@ -608,7 +608,8 @@ export const HomeSection = () => {
           {offlineRoutines.length === 0 ? (
             <p className="text-muted-foreground text-sm">No offline classes scheduled</p>
           ) : (
-            <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -672,6 +673,54 @@ export const HomeSection = () => {
                 </TableBody>
               </Table>
             </div>
+            {/* Mobile Cards */}
+            <div className="block md:hidden space-y-3">
+              {offlineRoutines.map((routine) => (
+                <Card key={routine.id} className="border-border/60">
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="outline" className="text-xs font-medium">{routine.day}</Badge>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {routine.time}
+                      </span>
+                    </div>
+                    <p className="font-semibold text-foreground text-base">{routine.subject}</p>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      {routine.teacher && (
+                        <span className="flex items-center gap-1">
+                          <span className="font-medium text-foreground/70">Teacher:</span> {routine.teacher}
+                        </span>
+                      )}
+                      {routine.room && (
+                        <span className="flex items-center gap-1">
+                          <span className="font-medium text-foreground/70">Room:</span> {routine.room}
+                        </span>
+                      )}
+                    </div>
+                    {canEdit && (
+                      <div className="flex gap-1 justify-end pt-2 border-t border-border/40">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-primary hover:text-primary"
+                          onClick={() => openEditModal(routine)}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          onClick={() => handleDelete(routine.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           )}
         </div>
 
@@ -686,7 +735,8 @@ export const HomeSection = () => {
           {onlineRoutines.length === 0 ? (
             <p className="text-muted-foreground text-sm">No online classes scheduled</p>
           ) : (
-            <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -747,6 +797,47 @@ export const HomeSection = () => {
                   ))}
                 </TableBody>
               </Table>
+            </div>
+            {/* Mobile Cards */}
+            <div className="block md:hidden space-y-3">
+              {onlineRoutines.map((routine) => (
+                <Card key={routine.id} className="border-border/60">
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="outline" className="text-xs font-medium">{routine.day}</Badge>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {routine.time}
+                      </span>
+                    </div>
+                    <p className="font-semibold text-foreground text-base">{routine.subject}</p>
+                    {routine.teacher && (
+                      <div className="text-xs text-muted-foreground">
+                        <span className="font-medium text-foreground/70">Teacher:</span> {routine.teacher}
+                      </div>
+                    )}
+                    {canEdit && (
+                      <div className="flex gap-1 justify-end pt-2 border-t border-border/40">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-primary hover:text-primary"
+                          onClick={() => openEditModal(routine)}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          onClick={() => handleDelete(routine.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           )}
         </div>
