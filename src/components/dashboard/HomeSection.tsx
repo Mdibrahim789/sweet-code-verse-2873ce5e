@@ -497,7 +497,7 @@ export const HomeSection = () => {
     </div>
   );
 
-  const isLoading = routinesLoading && noticesLoading && pollsLoading;
+  const isLoading = routinesLoading || noticesLoading || pollsLoading;
 
   if (isLoading) {
     return (
