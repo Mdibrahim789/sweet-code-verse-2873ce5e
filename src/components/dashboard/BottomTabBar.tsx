@@ -7,14 +7,16 @@ import { useGuest } from '@/contexts/GuestContext';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
-const TABS = [
+const GUEST_ALLOWED_PATHS = ['/bus', '/about'];
+
+const DEFAULT_TABS = [
   { label: 'Academic', icon: BookOpen, path: '/academic' },
   { label: 'Students', icon: Users, path: '/students' },
   { label: 'Home', icon: Home, path: '/home', isCenter: true },
   { label: 'Notices', icon: Bell, path: '/notices' },
 ];
 
-const MORE_ITEMS = [
+const DEFAULT_MORE_ITEMS = [
   { label: 'Bus', icon: Bus, path: '/bus' },
   { label: 'Faculty', icon: GraduationCap, path: '/faculty' },
   { label: 'Attendance', icon: ClipboardCheck, path: '/attendance' },
@@ -26,12 +28,23 @@ const MORE_ITEMS = [
   { label: 'Profile', icon: User, path: '/profile' },
 ];
 
+const GUEST_TABS = [
+  { label: 'Bus', icon: Bus, path: '/bus', isCenter: true },
+  { label: 'About', icon: Info, path: '/about' },
+];
+
 export const BottomTabBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sheetOpen, setSheetOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { isGuestMode, exitGuestMode } = useGuest();
+
+  const isGuest = isGuestMode && !user;
+  const TABS = isGuest ? GUEST_TABS : DEFAULT_TABS;
+  const MORE_ITEMS = isGuest
+    ? DEFAULT_MORE_ITEMS.filter(item => GUEST_ALLOWED_PATHS.includes(item.path))
+    : DEFAULT_MORE_ITEMS;
 
   const isActive = (path: string) => location.pathname === path;
   const isMoreActive = MORE_ITEMS.some(item => isActive(item.path));

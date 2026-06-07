@@ -1,32 +1,24 @@
-## Plan: Add Tools Section
+## Problem
 
-### What to build
-A new **Tools** page in the portal listing external utilities for students. First entry: **UU Top Page** (https://uutoppage.pro.bd/) — Uttara University assignment/lab cover page generator.
+In guest mode the bottom tab bar (`BottomTabBar.tsx`) shows every route, including ones guests can't access (Academic, Students, Notices, Faculty, Polls, etc.). Tapping them just lands on an encrypted/locked screen. Guests should only have access to the public paths (`/bus`, `/about`), consistent with how the desktop `Sidebar.tsx` already restricts via `GUEST_ALLOWED_PATHS`.
 
-### Changes
+## Goal
 
-1. **New component** `src/components/dashboard/ToolsSection.tsx`
-   - Grid of tool cards (responsive: 1 col mobile, 2 cols desktop)
-   - First card: UU Top Page
-     - Title: "UU Top Page"
-     - Description: "Generate print-ready assignment & lab report cover pages with official Uttara University templates."
-     - Icon: `FileText` (lucide-react)
-     - Badge: "External"
-     - Button "Open Tool" → opens https://uutoppage.pro.bd/ in new tab (`target="_blank"`, `rel="noopener noreferrer"`)
-   - Layout matches existing sections (header + cards using design tokens)
+When in guest mode, the bottom tab bar should only surface guest-accessible destinations, so guests aren't presented with tabs that lead to locked content.
 
-2. **Routing** `src/pages/Index.tsx`
-   - Add `tools` to active section state and render `<ToolsSection />`
+## Changes (`src/components/dashboard/BottomTabBar.tsx`)
 
-3. **Navigation**
-   - `src/components/dashboard/Sidebar.tsx` — add "Tools" item with `Wrench` icon
-   - `src/components/dashboard/BottomTabBar.tsx` — add "Tools" tab (if space; otherwise put under a "More" overflow if 5 tabs already exist — will verify on implementation)
+1. Add a `GUEST_ALLOWED_PATHS = ['/bus', '/about']` constant (mirroring `DashboardLayout.tsx` `PUBLIC_PATHS`).
+2. Read `isGuestMode` + `user` from context (already imported).
+3. When in guest mode and not logged in, restructure the bottom bar so guest-accessible items are the focus:
+   - Make **Bus** the center tab and surface **About** as a visible tab.
+   - Hide the inaccessible main tabs (Academic, Students, Notices).
+   - In the "More" sheet, show only guest-allowed items (`/about`) plus the existing "Login for Full Access" button; hide all restricted items.
+4. For logged-in / normal users, keep the existing tabs and full "More" list unchanged.
 
-4. **Skeleton loader** in `SectionSkeletons.tsx` for the Tools page
+### Approach detail
+Compute the rendered `TABS` and `MORE_ITEMS` based on guest state (e.g. a guest-specific tab set), rather than always rendering the full arrays. This keeps the design tokens/styling identical and only filters what's shown.
 
-### Out of scope
-- No backend changes, no DB tables — purely a frontend external-link directory
-- No auth/permission gating (visible to all logged-in users like other sections)
-
-### Future-friendly
-Tool list will be defined as an array in `ToolsSection.tsx` so adding more tools later = one object entry.
+No backend, routing, or auth-logic changes — purely presentation filtering in the bottom nav.</content>
+<summary>Filter the mobile bottom tab bar so guests only see guest-accessible routes (Bus/About), matching the existing sidebar restriction.</summary>
+</invoke>
