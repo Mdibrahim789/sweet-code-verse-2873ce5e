@@ -560,11 +560,20 @@ export const HomeSection = () => {
             </Select>
 
             <div className="grid grid-cols-2 gap-3">
-              <Input 
-                placeholder="Day (e.g. Sunday)" 
-                value={formData.day}
-                onChange={(e) => setFormData({ ...formData, day: e.target.value })}
-              />
+              <Select value={formData.day} onValueChange={(v) => setFormData({ ...formData, day: v })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Day" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Saturday">Saturday</SelectItem>
+                  <SelectItem value="Sunday">Sunday</SelectItem>
+                  <SelectItem value="Monday">Monday</SelectItem>
+                  <SelectItem value="Tuesday">Tuesday</SelectItem>
+                  <SelectItem value="Wednesday">Wednesday</SelectItem>
+                  <SelectItem value="Thursday">Thursday</SelectItem>
+                  <SelectItem value="Friday">Friday</SelectItem>
+                </SelectContent>
+              </Select>
               <Input 
                 placeholder="Time (e.g. 10:00 AM)" 
                 value={formData.time}
