@@ -1,4 +1,4 @@
-import { Zap, Users, BookOpen, Bell, ArrowRight, Eye, Download } from 'lucide-react';
+import { Zap, Users, BookOpen, Bell, ArrowRight, Eye, Download, MapPin, FileText, CalendarDays, Bus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
