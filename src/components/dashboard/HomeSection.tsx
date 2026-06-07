@@ -607,7 +607,7 @@ export const HomeSection = () => {
           
           {offlineRoutines.length === 0 ? (
             <p className="text-muted-foreground text-sm">No offline classes scheduled</p>
-          ) : (
+          ) : (<>
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto">
               <Table>
@@ -721,7 +721,7 @@ export const HomeSection = () => {
                 </Card>
               ))}
             </div>
-          )}
+          </>)}
         </div>
 
         {/* Online Classes */}
@@ -734,7 +734,7 @@ export const HomeSection = () => {
           
           {onlineRoutines.length === 0 ? (
             <p className="text-muted-foreground text-sm">No online classes scheduled</p>
-          ) : (
+          ) : (<>
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto">
               <Table>
@@ -839,7 +839,7 @@ export const HomeSection = () => {
                 </Card>
               ))}
             </div>
-          )}
+          </>)}
         </div>
       </div>
 
