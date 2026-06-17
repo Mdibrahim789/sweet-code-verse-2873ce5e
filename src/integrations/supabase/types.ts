@@ -456,6 +456,51 @@ export type Database = {
         }
         Relationships: []
       }
+      matches: {
+        Row: {
+          created_at: string
+          id: string
+          match_time: string
+          score_a: number | null
+          score_b: number | null
+          stage: string | null
+          status: string
+          team_a: string
+          team_a_flag: string | null
+          team_b: string
+          team_b_flag: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_time: string
+          score_a?: number | null
+          score_b?: number | null
+          stage?: string | null
+          status?: string
+          team_a: string
+          team_a_flag?: string | null
+          team_b: string
+          team_b_flag?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_time?: string
+          score_a?: number | null
+          score_b?: number | null
+          stage?: string | null
+          status?: string
+          team_a?: string
+          team_a_flag?: string | null
+          team_b?: string
+          team_b_flag?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notices: {
         Row: {
           created_at: string

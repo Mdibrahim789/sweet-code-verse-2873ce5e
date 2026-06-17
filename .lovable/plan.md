@@ -1,53 +1,51 @@
-# Master-Controlled Multi-Theme System
+# World Cup Schedule + Results card & Theme label on banner
 
-The master admin picks one site theme from the admin panel; it's saved in Supabase and applied to **every** user in real time. Themes available:
+Two changes to the Home page (`HomeSection.tsx`):
 
-**Core 3:** World Cup (neon, current), Light/White, Dark
-**Flags:** Argentina, Brazil, Portugal, Spain, Saudi Arabia, Morocco
+## 1. Show selected theme name on the banner
+Add a small pill in the banner (top-right) showing the currently active theme label (e.g. "Theme: Brazil") read from `useTheme()`. It updates live whenever the master changes the theme.
 
-## 1. Database (migration)
-Create a single-row global settings table:
+## 2. World Cup schedule + match results (admin-managed)
+A new **"World Cup"** card directly below the banner that lists upcoming fixtures and latest results, managed by the Master Admin.
+
+### Database (migration)
+New table `public.matches`:
 ```text
-public.site_settings
-  id           int primary key default 1 (locked to one row)
-  active_theme text not null default 'worldcup'
-  updated_at   timestamptz default now()
+matches
+  id            uuid pk
+  team_a        text
+  team_b        text
+  team_a_flag   text   (emoji/short code, optional)
+  team_b_flag   text   (optional)
+  match_time    timestamptz   (kickoff)
+  stage         text   (e.g. "Group A", "Round of 16", optional)
+  status        text   ('scheduled' | 'finished')  default 'scheduled'
+  score_a       int    (nullable)
+  score_b       int    (nullable)
+  created_at / updated_at
 ```
-- GRANT SELECT to `anon` + `authenticated` (everyone reads the active theme).
-- GRANT UPDATE to `authenticated`; RLS UPDATE policy restricted to master via `has_role(auth.uid(),'master')`.
-- Seed the single row with `worldcup`.
-- Add table to `supabase_realtime` publication so theme changes push live to all clients.
+- GRANT SELECT to `anon` + `authenticated` (everyone sees fixtures).
+- GRANT INSERT/UPDATE/DELETE to `authenticated`; RLS write policies restricted to master via `has_role(auth.uid(),'master')`.
+- Read policy: anyone can SELECT.
+- Realtime-enabled so updates appear live.
+- `updated_at` trigger.
 
-## 2. Theme tokens (`src/index.css`)
-Define a token block per theme using a `data-theme` attribute on `<html>`:
-- `worldcup` → current neon tokens (keep as-is)
-- `light` → clean white/light palette
-- `dark` → classic neutral dark
-- `argentina` → sky-blue (#75AADB) + white + gold sun accent
-- `brazil` → green (#009C3B) + yellow (#FFDF00) + blue accent
-- `portugal` → deep red (#DA291C) + green (#006600) + gold
-- `spain` → red (#AA151B) + yellow/gold (#F1BF00)
-- `saudi` → green (#006C35) + white
-- `morocco` → red (#C1272D) + green (#006233)
+### Home card (`HomeSection.tsx`)
+- New `WorldCupCard` showing two groups:
+  - **Upcoming** (status scheduled, sorted by kickoff) — teams, stage, date/time via date-fns.
+  - **Results** (status finished, most recent first) — teams with final score highlighted.
+- Live via realtime subscription (cleanup on unmount).
+- Hidden entirely if there are no matches, so it never shows an empty box.
+- Styled with existing neon/semantic tokens to match the theme.
 
-Each block overrides the same semantic tokens (`--background`, `--card`, `--primary`, `--accent`, `--foreground`, `--border`, sidebar, charts, glows) so all existing components re-skin automatically — no per-component edits.
-
-## 3. Theme context (`src/contexts/ThemeContext.tsx`)
-Rewrite to support named themes:
-- On load: read `active_theme` from `site_settings`, apply it by setting `data-theme` on `<html>` (plus the matching `light`/`dark` base class for shadcn).
-- Subscribe to realtime changes on `site_settings` → instantly re-apply when master switches.
-- Expose `theme`, `setTheme` (writes to DB, master only), and the theme list.
-- Local fallback to last-known theme (localStorage) for instant first paint before the DB responds.
-
-## 4. Admin panel UI (`src/components/dashboard/AdminSection.tsx`)
-Add a **"Site Theme"** card (master only) near the top:
-- A responsive grid of theme cards, each showing the theme name + a small color swatch preview (the flag/accent colors).
-- Active theme highlighted; clicking one updates `site_settings.active_theme` and toasts "Theme updated for everyone".
-
-## 5. Landing toggle (`src/components/dashboard/ThemeToggle.tsx`)
-Since theme is now global, the sun/moon toggle no longer fits. I'll remove it from the landing header (or leave a static look) so it doesn't conflict with the global theme.
+### Admin panel (`AdminSection.tsx`)
+New **"World Cup Matches"** card (master only):
+- Form to add a match: team A, team B, optional flags/emoji, stage, kickoff date-time.
+- List of existing matches with: set/edit score + mark finished, and delete.
+- Writes go to the `matches` table (RLS enforces master-only).
 
 ## Notes
-- All re-skinning is via semantic tokens — no component logic changes.
-- Non-master users only read the theme; the picker is master-only and enforced by RLS.
-- I'll verify by switching themes in the admin panel and screenshotting.
+- All UI text in English.
+- Re-uses semantic tokens; no new colors.
+- A data hook (`useMatches`) handles fetch + realtime, shared by Home and Admin.
+- I'll verify by adding a sample match and screenshotting the home card.
