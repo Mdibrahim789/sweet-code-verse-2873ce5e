@@ -3,135 +3,123 @@
 @tailwind components;
 @tailwind utilities;
 
-/* UU EEE Dashboard Design System - World Cup Pitch Green & Gold Theme */
+/* UU EEE Dashboard Design System - Neon FIFA World Cup Theme */
 
 @layer base {
   :root {
-    /* Main backgrounds - Light mode (warm cream) */
-    --background: 46 45% 95%;
-    --foreground: 146 40% 12%;
+    /* Main backgrounds - near-black stadium with deep-blue tint */
+    --background: 240 30% 4%;
+    --foreground: 210 40% 96%;
 
-    /* Card surfaces */
-    --card: 0 0% 100%;
-    --card-foreground: 146 40% 12%;
+    /* Card surfaces - very dark navy */
+    --card: 240 26% 8%;
+    --card-foreground: 210 40% 96%;
 
     /* Popover */
-    --popover: 0 0% 100%;
-    --popover-foreground: 146 40% 12%;
+    --popover: 240 26% 8%;
+    --popover-foreground: 210 40% 96%;
 
-    /* Primary - Pitch Green */
-    --primary: 142 38% 24%;
-    --primary-foreground: 46 50% 95%;
+    /* Primary - Neon Blue */
+    --primary: 205 100% 55%;
+    --primary-foreground: 240 30% 4%;
 
     /* Secondary */
-    --secondary: 46 30% 90%;
-    --secondary-foreground: 146 40% 18%;
+    --secondary: 240 22% 14%;
+    --secondary-foreground: 210 40% 96%;
 
     /* Muted */
-    --muted: 46 25% 90%;
-    --muted-foreground: 142 12% 40%;
+    --muted: 240 20% 14%;
+    --muted-foreground: 220 15% 62%;
 
     /* Accent - Trophy Gold */
-    --accent: 44 60% 52%;
-    --accent-foreground: 146 45% 12%;
+    --accent: 44 80% 58%;
+    --accent-foreground: 240 30% 4%;
 
-    /* Destructive */
-    --destructive: 0 72% 51%;
+    /* Destructive - Neon Red */
+    --destructive: 352 90% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Success */
-    --success: 142 55% 38%;
-    --success-foreground: 0 0% 100%;
+    /* Success - Neon Green */
+    --success: 145 80% 48%;
+    --success-foreground: 240 30% 4%;
 
     /* Border/Input */
-    --border: 46 25% 84%;
-    --input: 46 25% 84%;
-    --ring: 142 38% 24%;
+    --border: 240 22% 18%;
+    --input: 240 22% 18%;
+    --ring: 205 100% 55%;
 
     --radius: 0.5rem;
 
-    /* Sidebar - Deep Pitch Green */
-    --sidebar-background: 146 42% 13%;
-    --sidebar-foreground: 46 40% 95%;
-    --sidebar-primary: 44 60% 52%;
-    --sidebar-primary-foreground: 146 45% 12%;
-    --sidebar-accent: 146 35% 20%;
-    --sidebar-accent-foreground: 46 40% 95%;
-    --sidebar-border: 146 28% 24%;
-    --sidebar-ring: 44 60% 52%;
-    --sidebar-muted: 142 15% 60%;
+    /* Sidebar - Pure black with neon-blue active */
+    --sidebar-background: 240 35% 3%;
+    --sidebar-foreground: 210 40% 92%;
+    --sidebar-primary: 205 100% 55%;
+    --sidebar-primary-foreground: 240 30% 4%;
+    --sidebar-accent: 240 25% 12%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 240 25% 14%;
+    --sidebar-ring: 205 100% 55%;
+    --sidebar-muted: 220 14% 55%;
 
-    /* Chart colors - Pitch & Gold theme */
-    --chart-1: 142 38% 30%;
-    --chart-2: 44 60% 52%;
-    --chart-3: 142 45% 45%;
-    --chart-4: 24 60% 50%;
-    --chart-5: 160 40% 40%;
+    /* Chart colors - neon red/blue/green/gold */
+    --chart-1: 205 100% 55%;
+    --chart-2: 44 80% 58%;
+    --chart-3: 145 80% 48%;
+    --chart-4: 352 90% 55%;
+    --chart-5: 270 80% 62%;
 
-    --sidebar: 46 45% 95%;
+    --sidebar: 240 35% 3%;
+
+    /* Neon glows */
+    --glow-blue: 0 0 18px hsl(205 100% 55% / 0.55);
+    --glow-red: 0 0 18px hsl(352 90% 55% / 0.55);
+    --glow-green: 0 0 18px hsl(145 80% 48% / 0.55);
+    --glow-gold: 0 0 18px hsl(44 80% 58% / 0.55);
+    --gradient-neon: linear-gradient(135deg, hsl(352 90% 55%), hsl(205 100% 55%), hsl(145 80% 48%));
   }
 
   .dark {
-    /* Main backgrounds - Dark mode (night stadium) */
-    --background: 146 40% 7%;
-    --foreground: 46 35% 94%;
-
-    /* Card surfaces */
-    --card: 146 35% 11%;
-    --card-foreground: 46 35% 94%;
-
-    /* Popover */
-    --popover: 146 35% 11%;
-    --popover-foreground: 46 35% 94%;
-
-    /* Primary - Brighter pitch green */
-    --primary: 142 50% 42%;
-    --primary-foreground: 146 45% 8%;
-
-    /* Secondary */
-    --secondary: 146 30% 16%;
-    --secondary-foreground: 46 35% 94%;
-
-    /* Muted */
-    --muted: 146 30% 16%;
-    --muted-foreground: 142 12% 60%;
-
-    /* Accent - Trophy Gold (brighter) */
-    --accent: 44 65% 58%;
-    --accent-foreground: 146 45% 8%;
-
-    /* Destructive */
-    --destructive: 0 62% 55%;
-    --destructive-foreground: 46 35% 94%;
-
-    /* Success */
-    --success: 142 55% 45%;
-    --success-foreground: 0 0% 100%;
-
-    /* Border/Input */
-    --border: 146 25% 20%;
-    --input: 146 25% 22%;
-    --ring: 142 50% 42%;
-
-    /* Sidebar - Darker Pitch */
-    --sidebar-background: 146 45% 7%;
-    --sidebar-foreground: 46 35% 94%;
-    --sidebar-primary: 44 65% 58%;
-    --sidebar-primary-foreground: 146 45% 8%;
-    --sidebar-accent: 146 32% 15%;
-    --sidebar-accent-foreground: 46 35% 94%;
-    --sidebar-border: 146 25% 18%;
-    --sidebar-ring: 44 65% 58%;
-    --sidebar-muted: 142 12% 55%;
-
-    /* Chart colors */
-    --chart-1: 142 50% 48%;
-    --chart-2: 44 65% 58%;
-    --chart-3: 142 45% 55%;
-    --chart-4: 24 65% 55%;
-    --chart-5: 160 45% 50%;
-
-    --sidebar: 146 35% 11%;
+    --background: 240 30% 4%;
+    --foreground: 210 40% 96%;
+    --card: 240 26% 8%;
+    --card-foreground: 210 40% 96%;
+    --popover: 240 26% 8%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 205 100% 58%;
+    --primary-foreground: 240 30% 4%;
+    --secondary: 240 22% 14%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 240 20% 14%;
+    --muted-foreground: 220 15% 64%;
+    --accent: 44 82% 60%;
+    --accent-foreground: 240 30% 4%;
+    --destructive: 352 92% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 145 82% 50%;
+    --success-foreground: 240 30% 4%;
+    --border: 240 22% 18%;
+    --input: 240 22% 18%;
+    --ring: 205 100% 58%;
+    --sidebar-background: 240 35% 3%;
+    --sidebar-foreground: 210 40% 92%;
+    --sidebar-primary: 205 100% 58%;
+    --sidebar-primary-foreground: 240 30% 4%;
+    --sidebar-accent: 240 25% 12%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 240 25% 14%;
+    --sidebar-ring: 205 100% 58%;
+    --sidebar-muted: 220 14% 55%;
+    --chart-1: 205 100% 58%;
+    --chart-2: 44 82% 60%;
+    --chart-3: 145 82% 50%;
+    --chart-4: 352 92% 58%;
+    --chart-5: 270 80% 64%;
+    --sidebar: 240 35% 3%;
+    --glow-blue: 0 0 18px hsl(205 100% 58% / 0.6);
+    --glow-red: 0 0 18px hsl(352 92% 58% / 0.6);
+    --glow-green: 0 0 18px hsl(145 82% 50% / 0.6);
+    --glow-gold: 0 0 18px hsl(44 82% 60% / 0.6);
+    --gradient-neon: linear-gradient(135deg, hsl(352 92% 58%), hsl(205 100% 58%), hsl(145 82% 50%));
   }
 }
 
@@ -296,5 +284,35 @@
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Neon helpers */
+  .text-glow {
+    text-shadow: 0 0 8px hsl(var(--primary) / 0.7), 0 0 18px hsl(var(--primary) / 0.4);
+  }
+
+  .text-glow-gold {
+    text-shadow: 0 0 8px hsl(var(--accent) / 0.8), 0 0 18px hsl(var(--accent) / 0.45);
+  }
+
+  .neon-border {
+    border: 1px solid hsl(var(--primary) / 0.5);
+    box-shadow: var(--glow-blue), inset 0 0 12px hsl(var(--primary) / 0.12);
+  }
+
+  .neon-grid {
+    background-image:
+      linear-gradient(hsl(var(--primary) / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--primary) / 0.05) 1px, transparent 1px);
+    background-size: 38px 38px;
+  }
+
+  @keyframes neonPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+  }
+
+  .animate-neon-pulse {
+    animation: neonPulse 2.4s ease-in-out infinite;
   }
 }

@@ -509,15 +509,15 @@ export const HomeSection = () => {
 
   return (
     <div className="animate-fade-up space-y-6">
-      {/* World Cup festive banner */}
-      <div className="relative overflow-hidden rounded-xl border-2 border-accent/40 bg-gradient-to-r from-primary via-primary/90 to-success p-4 shadow-lg">
-        <div className="absolute -right-4 -top-6 text-7xl opacity-20 rotate-12 select-none">⚽</div>
-        <div className="absolute right-20 bottom-1 text-4xl opacity-20 select-none">🏆</div>
+      {/* World Cup festive banner - neon */}
+      <div className="neon-grid neon-border relative overflow-hidden rounded-xl bg-card p-4">
+        <div className="absolute -right-4 -top-6 rotate-12 select-none text-7xl opacity-20">⚽</div>
+        <div className="absolute right-20 bottom-1 select-none text-4xl opacity-20">🏆</div>
         <div className="relative flex items-center gap-3">
-          <span className="text-3xl animate-pop-in">⚽</span>
+          <span className="animate-neon-pulse text-3xl drop-shadow-[0_0_10px_hsl(var(--accent)/0.7)]">🏆</span>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-accent">World Cup Season</p>
-            <h3 className="font-display text-lg font-extrabold text-primary-foreground">Game On — Good Luck to All! 🥅</h3>
+            <p className="text-xs font-semibold uppercase tracking-widest text-accent text-glow-gold">World Cup Season</p>
+            <h3 className="font-display text-lg font-extrabold text-primary text-glow">Game On — Good Luck to All! 🥅</h3>
           </div>
         </div>
       </div>
