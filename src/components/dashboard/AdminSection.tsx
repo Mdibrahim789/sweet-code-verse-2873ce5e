@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Crown, Key, Users, Trash2, Copy, Shield, UserPlus, GraduationCap } from 'lucide-react';
+import { Crown, Key, Users, Trash2, Copy, Shield, UserPlus, GraduationCap, Palette, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { AcademicTermsManager } from './AcademicTermsManager';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const PERMISSIONS = [
   { id: 'routine', label: 'Routine' },
