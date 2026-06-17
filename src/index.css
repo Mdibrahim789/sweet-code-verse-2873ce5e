@@ -285,4 +285,34 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.5);
   }
+
+  /* Neon helpers */
+  .text-glow {
+    text-shadow: 0 0 8px hsl(var(--primary) / 0.7), 0 0 18px hsl(var(--primary) / 0.4);
+  }
+
+  .text-glow-gold {
+    text-shadow: 0 0 8px hsl(var(--accent) / 0.8), 0 0 18px hsl(var(--accent) / 0.45);
+  }
+
+  .neon-border {
+    border: 1px solid hsl(var(--primary) / 0.5);
+    box-shadow: var(--glow-blue), inset 0 0 12px hsl(var(--primary) / 0.12);
+  }
+
+  .neon-grid {
+    background-image:
+      linear-gradient(hsl(var(--primary) / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--primary) / 0.05) 1px, transparent 1px);
+    background-size: 38px 38px;
+  }
+
+  @keyframes neonPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+  }
+
+  .animate-neon-pulse {
+    animation: neonPulse 2.4s ease-in-out infinite;
+  }
 }
