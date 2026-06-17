@@ -1,38 +1,53 @@
-# Neon FIFA World Cup Theme
+# Master-Controlled Multi-Theme System
 
-The current pitch-green & cream theme doesn't match the vibe of your reference image. The reference is a **dark, near-black stadium look with glowing neon outlines (red, blue, green) and a gold trophy accent**. I'll rebuild the theme around that.
+The master admin picks one site theme from the admin panel; it's saved in Supabase and applied to **every** user in real time. Themes available:
 
-## What changes
+**Core 3:** World Cup (neon, current), Light/White, Dark
+**Flags:** Argentina, Brazil, Portugal, Spain, Saudi Arabia, Morocco
 
-### 1. Color tokens (`src/index.css`)
-Make the app dark-neon by default:
-- **Background**: near-black `240 30% 4%` with a subtle deep-blue tint (like the image)
-- **Cards/surfaces**: very dark navy `240 25% 8%` with subtle neon borders
-- **Primary**: neon blue `205 100% 55%` (the blue outlines/stars)
-- **Accent**: trophy gold `44 80% 58%`
-- **Destructive/red glow**: neon red `352 90% 55%`
-- **Success/green glow**: neon green `145 80% 50%`
-- Sidebar: pure black with neon-blue active states
-- Update chart colors to the neon red/blue/green/gold set
-- Apply the same neon palette to both `:root` and `.dark` so it looks right regardless of toggle
+## 1. Database (migration)
+Create a single-row global settings table:
+```text
+public.site_settings
+  id           int primary key default 1 (locked to one row)
+  active_theme text not null default 'worldcup'
+  updated_at   timestamptz default now()
+```
+- GRANT SELECT to `anon` + `authenticated` (everyone reads the active theme).
+- GRANT UPDATE to `authenticated`; RLS UPDATE policy restricted to master via `has_role(auth.uid(),'master')`.
+- Seed the single row with `worldcup`.
+- Add table to `supabase_realtime` publication so theme changes push live to all clients.
 
-### 2. Neon utilities & effects (`src/index.css`)
-Add reusable helpers:
-- `--gradient-neon` and `--glow-*` tokens (red/blue/green/gold drop-shadow glows)
-- `.text-glow` / `.neon-border` utility classes (glowing text + glowing card outlines)
-- A faint animated neon grid/scanline background behind the dashboard for the stadium-neon feel
+## 2. Theme tokens (`src/index.css`)
+Define a token block per theme using a `data-theme` attribute on `<html>`:
+- `worldcup` → current neon tokens (keep as-is)
+- `light` → clean white/light palette
+- `dark` → classic neutral dark
+- `argentina` → sky-blue (#75AADB) + white + gold sun accent
+- `brazil` → green (#009C3B) + yellow (#FFDF00) + blue accent
+- `portugal` → deep red (#DA291C) + green (#006600) + gold
+- `spain` → red (#AA151B) + yellow/gold (#F1BF00)
+- `saudi` → green (#006C35) + white
+- `morocco` → red (#C1272D) + green (#006233)
 
-### 3. Default theme (`src/App.tsx`)
-Switch `defaultTheme="light"` → `defaultTheme="dark"` so the neon look is the default experience.
+Each block overrides the same semantic tokens (`--background`, `--card`, `--primary`, `--accent`, `--foreground`, `--border`, sidebar, charts, glows) so all existing components re-skin automatically — no per-component edits.
 
-### 4. Home banner polish (`src/components/dashboard/HomeSection.tsx`)
-Update the existing World Cup banner to use the new neon glow (gold trophy + neon-outlined text) so it matches the reference.
+## 3. Theme context (`src/contexts/ThemeContext.tsx`)
+Rewrite to support named themes:
+- On load: read `active_theme` from `site_settings`, apply it by setting `data-theme` on `<html>` (plus the matching `light`/`dark` base class for shadcn).
+- Subscribe to realtime changes on `site_settings` → instantly re-apply when master switches.
+- Expose `theme`, `setTheme` (writes to DB, master only), and the theme list.
+- Local fallback to last-known theme (localStorage) for instant first paint before the DB responds.
+
+## 4. Admin panel UI (`src/components/dashboard/AdminSection.tsx`)
+Add a **"Site Theme"** card (master only) near the top:
+- A responsive grid of theme cards, each showing the theme name + a small color swatch preview (the flag/accent colors).
+- Active theme highlighted; clicking one updates `site_settings.active_theme` and toasts "Theme updated for everyone".
+
+## 5. Landing toggle (`src/components/dashboard/ThemeToggle.tsx`)
+Since theme is now global, the sun/moon toggle no longer fits. I'll remove it from the landing header (or leave a static look) so it doesn't conflict with the global theme.
 
 ## Notes
-- Fonts stay **Syne + Plus Jakarta Sans** (already set).
-- Only design tokens and presentation are touched — no logic/data changes.
-- I'll verify with a screenshot of `/home` after applying.
-
-```text
-[ near-black bg ]  +  [ neon blue / red / green glows ]  +  [ gold trophy accent ]
-```
+- All re-skinning is via semantic tokens — no component logic changes.
+- Non-master users only read the theme; the picker is master-only and enforced by RLS.
+- I'll verify by switching themes in the admin panel and screenshotting.

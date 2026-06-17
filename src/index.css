@@ -123,6 +123,373 @@
   }
 }
 
+
+
+/* ============ Selectable global themes (data-theme) ============ */
+@layer base {
+  /* LIGHT / WHITE */
+  [data-theme="light"] {
+    --background: 0 0% 100%;
+    --foreground: 222 30% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 30% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 30% 12%;
+    --primary: 222 70% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 30% 95%;
+    --secondary-foreground: 222 30% 18%;
+    --muted: 210 30% 95%;
+    --muted-foreground: 215 16% 45%;
+    --accent: 222 70% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 60% 38%;
+    --success-foreground: 0 0% 100%;
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 222 70% 45%;
+    --sidebar-background: 222 30% 13%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 222 70% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 25% 20%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 222 25% 24%;
+    --sidebar-ring: 222 70% 55%;
+    --sidebar-muted: 215 14% 65%;
+    --chart-1: 222 70% 50%;
+    --chart-2: 142 60% 42%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 60% 55%;
+    --chart-5: 0 72% 55%;
+    --sidebar: 222 30% 13%;
+    --glow-blue: 0 0 0 transparent;
+    --glow-red: 0 0 0 transparent;
+    --glow-green: 0 0 0 transparent;
+    --glow-gold: 0 0 0 transparent;
+    --gradient-neon: linear-gradient(135deg, hsl(222 70% 50%), hsl(280 60% 55%));
+  }
+
+  /* CLASSIC DARK */
+  [data-theme="dark"] {
+    --background: 222 28% 8%;
+    --foreground: 210 20% 94%;
+    --card: 222 26% 12%;
+    --card-foreground: 210 20% 94%;
+    --popover: 222 26% 12%;
+    --popover-foreground: 210 20% 94%;
+    --primary: 217 75% 60%;
+    --primary-foreground: 222 28% 8%;
+    --secondary: 222 22% 18%;
+    --secondary-foreground: 210 20% 94%;
+    --muted: 222 22% 18%;
+    --muted-foreground: 215 16% 62%;
+    --accent: 217 75% 60%;
+    --accent-foreground: 222 28% 8%;
+    --destructive: 0 62% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 55% 48%;
+    --success-foreground: 222 28% 8%;
+    --border: 222 20% 22%;
+    --input: 222 20% 22%;
+    --ring: 217 75% 60%;
+    --sidebar-background: 222 30% 6%;
+    --sidebar-foreground: 210 20% 92%;
+    --sidebar-primary: 217 75% 60%;
+    --sidebar-primary-foreground: 222 28% 8%;
+    --sidebar-accent: 222 24% 14%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 222 24% 16%;
+    --sidebar-ring: 217 75% 60%;
+    --sidebar-muted: 215 14% 58%;
+    --chart-1: 217 75% 62%;
+    --chart-2: 142 55% 50%;
+    --chart-3: 30 80% 58%;
+    --chart-4: 280 60% 62%;
+    --chart-5: 0 62% 58%;
+    --sidebar: 222 30% 6%;
+    --glow-blue: 0 0 0 transparent;
+    --glow-red: 0 0 0 transparent;
+    --glow-green: 0 0 0 transparent;
+    --glow-gold: 0 0 0 transparent;
+    --gradient-neon: linear-gradient(135deg, hsl(217 75% 60%), hsl(280 60% 60%));
+  }
+
+  /* ARGENTINA - sky blue, white, gold sun */
+  [data-theme="argentina"] {
+    --background: 205 70% 97%;
+    --foreground: 212 45% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 212 45% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 212 45% 18%;
+    --primary: 205 70% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 205 45% 92%;
+    --secondary-foreground: 212 45% 22%;
+    --muted: 205 40% 92%;
+    --muted-foreground: 210 20% 42%;
+    --accent: 45 90% 52%;
+    --accent-foreground: 212 45% 18%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 55% 40%;
+    --success-foreground: 0 0% 100%;
+    --border: 205 35% 84%;
+    --input: 205 35% 84%;
+    --ring: 205 70% 52%;
+    --sidebar-background: 205 65% 30%;
+    --sidebar-foreground: 0 0% 97%;
+    --sidebar-primary: 45 90% 55%;
+    --sidebar-primary-foreground: 212 45% 18%;
+    --sidebar-accent: 205 55% 38%;
+    --sidebar-accent-foreground: 0 0% 97%;
+    --sidebar-border: 205 50% 42%;
+    --sidebar-ring: 45 90% 55%;
+    --sidebar-muted: 205 25% 78%;
+    --chart-1: 205 70% 52%;
+    --chart-2: 45 90% 52%;
+    --chart-3: 205 60% 65%;
+    --chart-4: 212 45% 35%;
+    --chart-5: 30 70% 55%;
+    --sidebar: 205 65% 30%;
+    --glow-blue: 0 0 0 transparent;
+    --glow-red: 0 0 0 transparent;
+    --glow-green: 0 0 0 transparent;
+    --glow-gold: 0 0 0 transparent;
+    --gradient-neon: linear-gradient(135deg, hsl(205 70% 52%), hsl(45 90% 52%));
+  }
+
+  /* BRAZIL - green, yellow, blue */
+  [data-theme="brazil"] {
+    --background: 110 30% 97%;
+    --foreground: 145 50% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 145 50% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 145 50% 14%;
+    --primary: 145 80% 30%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 110 35% 92%;
+    --secondary-foreground: 145 50% 18%;
+    --muted: 110 30% 92%;
+    --muted-foreground: 145 15% 40%;
+    --accent: 48 95% 50%;
+    --accent-foreground: 145 50% 14%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 145 70% 36%;
+    --success-foreground: 0 0% 100%;
+    --border: 110 25% 84%;
+    --input: 110 25% 84%;
+    --ring: 145 80% 30%;
+    --sidebar-background: 145 70% 18%;
+    --sidebar-foreground: 0 0% 97%;
+    --sidebar-primary: 48 95% 52%;
+    --sidebar-primary-foreground: 145 50% 14%;
+    --sidebar-accent: 145 55% 24%;
+    --sidebar-accent-foreground: 0 0% 97%;
+    --sidebar-border: 145 50% 28%;
+    --sidebar-ring: 48 95% 52%;
+    --sidebar-muted: 145 18% 70%;
+    --chart-1: 145 80% 32%;
+    --chart-2: 48 95% 50%;
+    --chart-3: 215 70% 45%;
+    --chart-4: 145 50% 50%;
+    --chart-5: 30 75% 52%;
+    --sidebar: 145 70% 18%;
+    --glow-blue: 0 0 0 transparent;
+    --glow-red: 0 0 0 transparent;
+    --glow-green: 0 0 0 transparent;
+    --glow-gold: 0 0 0 transparent;
+    --gradient-neon: linear-gradient(135deg, hsl(145 80% 32%), hsl(48 95% 50%));
+  }
+
+  /* PORTUGAL - deep red, green, gold */
+  [data-theme="portugal"] {
+    --background: 0 25% 97%;
+    --foreground: 145 45% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 145 45% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 145 45% 14%;
+    --primary: 4 78% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 30% 93%;
+    --secondary-foreground: 145 45% 18%;
+    --muted: 0 25% 93%;
+    --muted-foreground: 145 12% 40%;
+    --accent: 45 85% 48%;
+    --accent-foreground: 145 45% 14%;
+    --destructive: 4 78% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 140 70% 30%;
+    --success-foreground: 0 0% 100%;
+    --border: 0 20% 85%;
+    --input: 0 20% 85%;
+    --ring: 4 78% 48%;
+    --sidebar-background: 140 70% 17%;
+    --sidebar-foreground: 0 0% 97%;
+    --sidebar-primary: 4 80% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 140 55% 24%;
+    --sidebar-accent-foreground: 0 0% 97%;
+    --sidebar-border: 140 50% 28%;
+    --sidebar-ring: 45 85% 50%;
+    --sidebar-muted: 140 18% 70%;
+    --chart-1: 4 78% 50%;
+    --chart-2: 140 70% 32%;
+    --chart-3: 45 85% 50%;
+    --chart-4: 4 60% 60%;
+    --chart-5: 140 45% 50%;
+    --sidebar: 140 70% 17%;
+    --glow-blue: 0 0 0 transparent;
+    --glow-red: 0 0 0 transparent;
+    --glow-green: 0 0 0 transparent;
+    --glow-gold: 0 0 0 transparent;
+    --gradient-neon: linear-gradient(135deg, hsl(4 78% 50%), hsl(140 70% 32%));
+  }
+
+  /* SPAIN - red, gold/yellow */
+  [data-theme="spain"] {
+    --background: 45 45% 97%;
+    --foreground: 0 50% 16%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 50% 16%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 50% 16%;
+    --primary: 354 75% 42%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 50% 92%;
+    --secondary-foreground: 0 50% 20%;
+    --muted: 45 45% 92%;
+    --muted-foreground: 30 20% 42%;
+    --accent: 45 92% 48%;
+    --accent-foreground: 0 50% 16%;
+    --destructive: 354 75% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 55% 38%;
+    --success-foreground: 0 0% 100%;
+    --border: 45 35% 84%;
+    --input: 45 35% 84%;
+    --ring: 354 75% 42%;
+    --sidebar-background: 354 65% 28%;
+    --sidebar-foreground: 0 0% 97%;
+    --sidebar-primary: 45 92% 52%;
+    --sidebar-primary-foreground: 0 50% 16%;
+    --sidebar-accent: 354 50% 36%;
+    --sidebar-accent-foreground: 0 0% 97%;
+    --sidebar-border: 354 45% 40%;
+    --sidebar-ring: 45 92% 52%;
+    --sidebar-muted: 354 20% 76%;
+    --chart-1: 354 75% 46%;
+    --chart-2: 45 92% 48%;
+    --chart-3: 30 80% 52%;
+    --chart-4: 354 55% 60%;
+    --chart-5: 15 70% 50%;
+    --sidebar: 354 65% 28%;
+    --glow-blue: 0 0 0 transparent;
+    --glow-red: 0 0 0 transparent;
+    --glow-green: 0 0 0 transparent;
+    --glow-gold: 0 0 0 transparent;
+    --gradient-neon: linear-gradient(135deg, hsl(354 75% 46%), hsl(45 92% 48%));
+  }
+
+  /* SAUDI ARABIA - green, white */
+  [data-theme="saudi"] {
+    --background: 150 25% 97%;
+    --foreground: 150 55% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 150 55% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 55% 12%;
+    --primary: 150 80% 24%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 150 25% 92%;
+    --secondary-foreground: 150 55% 16%;
+    --muted: 150 22% 92%;
+    --muted-foreground: 150 14% 38%;
+    --accent: 150 60% 36%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 150 70% 30%;
+    --success-foreground: 0 0% 100%;
+    --border: 150 20% 84%;
+    --input: 150 20% 84%;
+    --ring: 150 80% 24%;
+    --sidebar-background: 150 75% 14%;
+    --sidebar-foreground: 0 0% 97%;
+    --sidebar-primary: 150 55% 45%;
+    --sidebar-primary-foreground: 150 55% 10%;
+    --sidebar-accent: 150 55% 20%;
+    --sidebar-accent-foreground: 0 0% 97%;
+    --sidebar-border: 150 50% 24%;
+    --sidebar-ring: 150 55% 45%;
+    --sidebar-muted: 150 18% 68%;
+    --chart-1: 150 80% 28%;
+    --chart-2: 150 55% 45%;
+    --chart-3: 168 60% 38%;
+    --chart-4: 120 50% 40%;
+    --chart-5: 45 70% 50%;
+    --sidebar: 150 75% 14%;
+    --glow-blue: 0 0 0 transparent;
+    --glow-red: 0 0 0 transparent;
+    --glow-green: 0 0 0 transparent;
+    --glow-gold: 0 0 0 transparent;
+    --gradient-neon: linear-gradient(135deg, hsl(150 80% 28%), hsl(150 55% 45%));
+  }
+
+  /* MOROCCO - red, green */
+  [data-theme="morocco"] {
+    --background: 355 30% 97%;
+    --foreground: 355 55% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 355 55% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 355 55% 15%;
+    --primary: 356 72% 44%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 355 30% 93%;
+    --secondary-foreground: 355 55% 18%;
+    --muted: 355 25% 93%;
+    --muted-foreground: 355 14% 40%;
+    --accent: 150 70% 32%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 356 72% 44%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 150 70% 32%;
+    --success-foreground: 0 0% 100%;
+    --border: 355 22% 85%;
+    --input: 355 22% 85%;
+    --ring: 356 72% 44%;
+    --sidebar-background: 356 62% 26%;
+    --sidebar-foreground: 0 0% 97%;
+    --sidebar-primary: 150 60% 42%;
+    --sidebar-primary-foreground: 150 55% 10%;
+    --sidebar-accent: 356 50% 34%;
+    --sidebar-accent-foreground: 0 0% 97%;
+    --sidebar-border: 356 45% 38%;
+    --sidebar-ring: 150 60% 42%;
+    --sidebar-muted: 356 20% 76%;
+    --chart-1: 356 72% 48%;
+    --chart-2: 150 70% 34%;
+    --chart-3: 356 55% 60%;
+    --chart-4: 150 50% 48%;
+    --chart-5: 30 70% 52%;
+    --sidebar: 356 62% 26%;
+    --glow-blue: 0 0 0 transparent;
+    --glow-red: 0 0 0 transparent;
+    --glow-green: 0 0 0 transparent;
+    --glow-gold: 0 0 0 transparent;
+    --gradient-neon: linear-gradient(135deg, hsl(356 72% 48%), hsl(150 70% 34%));
+  }
+}
+
+
+
 @layer base {
   * {
     @apply border-border;

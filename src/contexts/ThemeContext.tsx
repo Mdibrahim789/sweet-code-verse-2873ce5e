@@ -1,68 +1,126 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-type Theme = 'light' | 'dark' | 'system';
+export type SiteTheme =
+  | 'worldcup'
+  | 'light'
+  | 'dark'
+  | 'argentina'
+  | 'brazil'
+  | 'portugal'
+  | 'spain'
+  | 'saudi'
+  | 'morocco';
+
+export interface ThemeOption {
+  id: SiteTheme;
+  label: string;
+  swatch: string[];
+}
+
+export const THEME_OPTIONS: ThemeOption[] = [
+  { id: 'worldcup', label: 'World Cup (Neon)', swatch: ['#06060f', '#1f9bff', '#f5c542', '#ff2e5b'] },
+  { id: 'light', label: 'Light / White', swatch: ['#ffffff', '#2848b8', '#e5e9f0', '#16223a'] },
+  { id: 'dark', label: 'Classic Dark', swatch: ['#12161f', '#4a8bf0', '#1c2230', '#e8edf5'] },
+  { id: 'argentina', label: 'Argentina', swatch: ['#75aadb', '#ffffff', '#f6b40e', '#1c3a5e'] },
+  { id: 'brazil', label: 'Brazil', swatch: ['#009c3b', '#ffdf00', '#1f4fb8', '#0b3d1f'] },
+  { id: 'portugal', label: 'Portugal', swatch: ['#da291c', '#006600', '#dba111', '#ffffff'] },
+  { id: 'spain', label: 'Spain', swatch: ['#aa151b', '#f1bf00', '#ffffff', '#5c0c10'] },
+  { id: 'saudi', label: 'Saudi Arabia', swatch: ['#006c35', '#ffffff', '#0a7a3f', '#063d1f'] },
+  { id: 'morocco', label: 'Morocco', swatch: ['#c1272d', '#006233', '#ffffff', '#5c1115'] },
+];
+
+const DARK_THEMES: SiteTheme[] = ['worldcup', 'dark'];
+const VALID_THEMES = THEME_OPTIONS.map((t) => t.id);
 
 interface ThemeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
+  theme: SiteTheme;
+  setTheme: (theme: SiteTheme) => Promise<void>;
+  options: ThemeOption[];
   resolvedTheme: 'light' | 'dark';
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const applyThemeToDom = (theme: SiteTheme) => {
+  const root = window.document.documentElement;
+  root.setAttribute('data-theme', theme);
+  const isDark = DARK_THEMES.includes(theme);
+  root.classList.remove('light', 'dark');
+  root.classList.add(isDark ? 'dark' : 'light');
+};
+
 export const ThemeProvider: React.FC<{
   children: React.ReactNode;
-  defaultTheme?: Theme;
-  attribute?: string;
-  enableSystem?: boolean;
-}> = ({ children, defaultTheme = 'light' }) => {
-  const [theme, setThemeState] = useState<Theme>(() => {
+  defaultTheme?: SiteTheme;
+}> = ({ children, defaultTheme = 'worldcup' }) => {
+  const [theme, setThemeState] = useState<SiteTheme>(() => {
     if (typeof window !== 'undefined') {
-      return (localStorage.getItem('theme') as Theme) || defaultTheme;
+      const stored = localStorage.getItem('site-theme') as SiteTheme | null;
+      if (stored && VALID_THEMES.includes(stored)) return stored;
     }
     return defaultTheme;
   });
 
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
-
+  // Apply instantly on change (first paint uses localStorage value)
   useEffect(() => {
-    const root = window.document.documentElement;
-
-    const applyTheme = (newTheme: Theme) => {
-      let resolved: 'light' | 'dark' = 'light';
-
-      if (newTheme === 'system') {
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        resolved = systemTheme;
-      } else {
-        resolved = newTheme;
-      }
-
-      root.classList.remove('light', 'dark');
-      root.classList.add(resolved);
-      setResolvedTheme(resolved);
-    };
-
-    applyTheme(theme);
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => {
-      if (theme === 'system') {
-        applyTheme('system');
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    applyThemeToDom(theme);
+    localStorage.setItem('site-theme', theme);
   }, [theme]);
 
-  const setTheme = (newTheme: Theme) => {
-    localStorage.setItem('theme', newTheme);
+  // Load global theme + subscribe to realtime updates
+  useEffect(() => {
+    let active = true;
+
+    const load = async () => {
+      const { data } = await supabase
+        .from('site_settings')
+        .select('active_theme')
+        .eq('id', 1)
+        .maybeSingle();
+      if (active && data?.active_theme && VALID_THEMES.includes(data.active_theme as SiteTheme)) {
+        setThemeState(data.active_theme as SiteTheme);
+      }
+    };
+    load();
+
+    const channel = supabase
+      .channel('site-settings-theme')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'site_settings' },
+        (payload) => {
+          const next = (payload.new as { active_theme?: string })?.active_theme;
+          if (next && VALID_THEMES.includes(next as SiteTheme)) {
+            setThemeState(next as SiteTheme);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const setTheme = useCallback(async (newTheme: SiteTheme) => {
+    // optimistic local apply
     setThemeState(newTheme);
-  };
+    const { error } = await supabase
+      .from('site_settings')
+      .update({ active_theme: newTheme })
+      .eq('id', 1);
+    if (error) {
+      toast.error('Failed to update theme. Only Master Admin can change it.');
+    }
+  }, []);
+
+  const resolvedTheme: 'light' | 'dark' = DARK_THEMES.includes(theme) ? 'dark' : 'light';
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, options: THEME_OPTIONS, resolvedTheme }}>
       {children}
     </ThemeContext.Provider>
   );
