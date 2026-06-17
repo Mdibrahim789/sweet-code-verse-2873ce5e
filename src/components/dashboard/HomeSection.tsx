@@ -344,6 +344,8 @@ export const HomeSection = () => {
   const isGuest = isGuestMode && !user;
   
   const { hasPermission } = useAuth();
+  const { theme, options: themeOptions } = useTheme();
+  const activeThemeLabel = themeOptions.find((t) => t.id === theme)?.label ?? theme;
   const { data: routines = [], isLoading: routinesLoading } = useRoutines();
   const { data: notices = [], isLoading: noticesLoading } = useNotices();
   const { data: polls = [], isLoading: pollsLoading } = usePolls();
