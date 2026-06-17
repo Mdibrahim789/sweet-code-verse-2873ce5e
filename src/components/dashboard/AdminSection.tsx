@@ -26,6 +26,7 @@ const PERMISSIONS = [
 
 export const AdminSection = () => {
   const { isMaster } = useAuth();
+  const { theme: activeTheme, setTheme, options: themeOptions } = useTheme();
   const { crKeys, loading: keysLoading, createCRKey, deleteCRKey } = useCRKeys();
   const { users, loading: usersLoading, updateUserRole, deleteUser } = useUserRoles();
   const [deletingUser, setDeletingUser] = useState<string | null>(null);
