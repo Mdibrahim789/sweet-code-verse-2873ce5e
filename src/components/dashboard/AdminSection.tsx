@@ -275,6 +275,9 @@ export const AdminSection = () => {
         </div>
       </Card>
 
+      {/* World Cup Matches */}
+      <MatchesManager />
+
       <AcademicTermsManager />
 
 
