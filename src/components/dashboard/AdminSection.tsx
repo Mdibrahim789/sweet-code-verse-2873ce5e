@@ -234,7 +234,46 @@ export const AdminSection = () => {
         <h2 className="text-2xl font-bold">Master Admin Panel</h2>
       </div>
 
-      {/* Academic Terms */}
+      {/* Site Theme */}
+      <Card className="p-6 border-l-4 border-l-primary">
+        <div className="flex items-center gap-2 mb-1">
+          <Palette className="w-5 h-5 text-primary" />
+          <h3 className="text-lg font-semibold">Site Theme</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Pick a theme — it applies live to every user.
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {themeOptions.map((opt) => {
+            const isActive = opt.id === activeTheme;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => setTheme(opt.id)}
+                className={`relative flex flex-col gap-2 rounded-lg border p-3 text-left transition-all ${
+                  isActive
+                    ? 'border-primary ring-2 ring-primary'
+                    : 'border-border hover:border-primary/60'
+                }`}
+              >
+                {isActive && (
+                  <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                    <Check className="h-3 w-3" />
+                  </span>
+                )}
+                <div className="flex h-7 w-full overflow-hidden rounded-md">
+                  {opt.swatch.map((c, i) => (
+                    <span key={i} className="flex-1" style={{ backgroundColor: c }} />
+                  ))}
+                </div>
+                <span className="text-sm font-medium">{opt.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
       <AcademicTermsManager />
 
 
