@@ -120,7 +120,10 @@
     --glow-green: 0 0 18px hsl(145 82% 50% / 0.6);
     --glow-gold: 0 0 18px hsl(44 82% 60% / 0.6);
     --gradient-neon: linear-gradient(135deg, hsl(352 92% 58%), hsl(205 100% 58%), hsl(145 82% 50%));
+  }
 }
+
+
 
 /* ============ Selectable global themes (data-theme) ============ */
 @layer base {
