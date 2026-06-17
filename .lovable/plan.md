@@ -1,24 +1,38 @@
-## Problem
+# Neon FIFA World Cup Theme
 
-In guest mode the bottom tab bar (`BottomTabBar.tsx`) shows every route, including ones guests can't access (Academic, Students, Notices, Faculty, Polls, etc.). Tapping them just lands on an encrypted/locked screen. Guests should only have access to the public paths (`/bus`, `/about`), consistent with how the desktop `Sidebar.tsx` already restricts via `GUEST_ALLOWED_PATHS`.
+The current pitch-green & cream theme doesn't match the vibe of your reference image. The reference is a **dark, near-black stadium look with glowing neon outlines (red, blue, green) and a gold trophy accent**. I'll rebuild the theme around that.
 
-## Goal
+## What changes
 
-When in guest mode, the bottom tab bar should only surface guest-accessible destinations, so guests aren't presented with tabs that lead to locked content.
+### 1. Color tokens (`src/index.css`)
+Make the app dark-neon by default:
+- **Background**: near-black `240 30% 4%` with a subtle deep-blue tint (like the image)
+- **Cards/surfaces**: very dark navy `240 25% 8%` with subtle neon borders
+- **Primary**: neon blue `205 100% 55%` (the blue outlines/stars)
+- **Accent**: trophy gold `44 80% 58%`
+- **Destructive/red glow**: neon red `352 90% 55%`
+- **Success/green glow**: neon green `145 80% 50%`
+- Sidebar: pure black with neon-blue active states
+- Update chart colors to the neon red/blue/green/gold set
+- Apply the same neon palette to both `:root` and `.dark` so it looks right regardless of toggle
 
-## Changes (`src/components/dashboard/BottomTabBar.tsx`)
+### 2. Neon utilities & effects (`src/index.css`)
+Add reusable helpers:
+- `--gradient-neon` and `--glow-*` tokens (red/blue/green/gold drop-shadow glows)
+- `.text-glow` / `.neon-border` utility classes (glowing text + glowing card outlines)
+- A faint animated neon grid/scanline background behind the dashboard for the stadium-neon feel
 
-1. Add a `GUEST_ALLOWED_PATHS = ['/bus', '/about']` constant (mirroring `DashboardLayout.tsx` `PUBLIC_PATHS`).
-2. Read `isGuestMode` + `user` from context (already imported).
-3. When in guest mode and not logged in, restructure the bottom bar so guest-accessible items are the focus:
-   - Make **Bus** the center tab and surface **About** as a visible tab.
-   - Hide the inaccessible main tabs (Academic, Students, Notices).
-   - In the "More" sheet, show only guest-allowed items (`/about`) plus the existing "Login for Full Access" button; hide all restricted items.
-4. For logged-in / normal users, keep the existing tabs and full "More" list unchanged.
+### 3. Default theme (`src/App.tsx`)
+Switch `defaultTheme="light"` → `defaultTheme="dark"` so the neon look is the default experience.
 
-### Approach detail
-Compute the rendered `TABS` and `MORE_ITEMS` based on guest state (e.g. a guest-specific tab set), rather than always rendering the full arrays. This keeps the design tokens/styling identical and only filters what's shown.
+### 4. Home banner polish (`src/components/dashboard/HomeSection.tsx`)
+Update the existing World Cup banner to use the new neon glow (gold trophy + neon-outlined text) so it matches the reference.
 
-No backend, routing, or auth-logic changes — purely presentation filtering in the bottom nav.</content>
-<summary>Filter the mobile bottom tab bar so guests only see guest-accessible routes (Bus/About), matching the existing sidebar restriction.</summary>
-</invoke>
+## Notes
+- Fonts stay **Syne + Plus Jakarta Sans** (already set).
+- Only design tokens and presentation are touched — no logic/data changes.
+- I'll verify with a screenshot of `/home` after applying.
+
+```text
+[ near-black bg ]  +  [ neon blue / red / green glows ]  +  [ gold trophy accent ]
+```
