@@ -157,13 +157,13 @@ export const AttendanceSection = () => {
     doc.text(`Date: ${format(new Date(record.date), 'dd MMM yyyy')}`, 20, 56);
     
     doc.setFillColor(240, 249, 255);
-    doc.roundedRect(130, 30, 60, 25, 3, 3, 'F');
+    doc.roundedRect(130, 31, 60, 25, 3, 3, 'F');
     doc.setFontSize(10);
     doc.setTextColor(59, 130, 246);
-    doc.text(`Present: ${presentCount}`, 135, 38);
-    doc.text(`Absent: ${absentCount}`, 135, 45);
+    doc.text(`Present: ${presentCount}`, 135, 39);
+    doc.text(`Absent: ${absentCount}`, 135, 46);
     if (manualCount > 0) {
-      doc.text(`Manual: ${manualCount}`, 135, 52);
+      doc.text(`Manual: ${manualCount}`, 135, 53);
     }
 
     const tableData = studentProfiles.map((p, index) => {
@@ -186,7 +186,7 @@ export const AttendanceSection = () => {
     });
 
     autoTable(doc, {
-      startY: 55,
+      startY: 63,
       head: [['#', 'Student ID', 'Name', 'Status']],
       body: tableData,
       headStyles: {
