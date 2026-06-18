@@ -490,7 +490,7 @@
 
 
 
-/* ============ Flag-themed background watermark per theme ============ */
+/* ============ Flag + players themed background per theme ============ */
 @layer base {
   body::before {
     content: "";
@@ -500,74 +500,49 @@
     pointer-events: none;
     background-color: transparent;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: center top;
     background-size: cover;
+    background-attachment: fixed;
     opacity: 0;
     transition: opacity 0.4s ease;
   }
 
-  /* ARGENTINA - sky-blue / white / sky-blue bands + gold sun */
-  [data-theme="argentina"] body::before {
-    opacity: 1;
-    background-image:
-      radial-gradient(circle at 50% 50%, hsl(45 95% 55% / 0.30) 0%, transparent 26%),
-      linear-gradient(
-        to bottom,
-        hsl(205 70% 55% / 0.24) 0%,
-        hsl(205 70% 55% / 0.24) 33%,
-        hsl(0 0% 100% / 0.20) 33%,
-        hsl(0 0% 100% / 0.20) 66%,
-        hsl(205 70% 55% / 0.24) 66%,
-        hsl(205 70% 55% / 0.24) 100%
-      );
+  /* Soft veil above the photo so content stays readable */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: hsl(var(--background) / 0.55);
+    opacity: 0;
+    transition: opacity 0.4s ease;
   }
 
-  /* BRAZIL - green field, yellow diamond, blue disc */
-  [data-theme="brazil"] body::before {
-    opacity: 1;
-    background-image:
-      radial-gradient(circle at 50% 50%, hsl(215 75% 45% / 0.28) 0%, hsl(215 75% 45% / 0.28) 12%, transparent 12.5%),
-      conic-gradient(from 45deg at 50% 50%, hsl(48 95% 52% / 0.26) 0deg, hsl(48 95% 52% / 0.26) 90deg, transparent 90deg, transparent 180deg, hsl(48 95% 52% / 0.26) 180deg, hsl(48 95% 52% / 0.26) 270deg, transparent 270deg),
-      linear-gradient(0deg, hsl(145 80% 32% / 0.20), hsl(145 80% 32% / 0.20));
-  }
-
-  /* PORTUGAL - green / red split with gold ring */
-  [data-theme="portugal"] body::before {
-    opacity: 1;
-    background-image:
-      radial-gradient(circle at 40% 50%, transparent 0%, transparent 7%, hsl(45 85% 50% / 0.34) 7.5%, hsl(45 85% 50% / 0.34) 10%, transparent 10.5%),
-      linear-gradient(to right, hsl(140 70% 30% / 0.26) 0%, hsl(140 70% 30% / 0.26) 40%, hsl(4 78% 50% / 0.24) 40%, hsl(4 78% 50% / 0.24) 100%);
-  }
-
-  /* SPAIN - red / gold / red horizontal bands */
-  [data-theme="spain"] body::before {
-    opacity: 1;
-    background-image: linear-gradient(
-      to bottom,
-      hsl(354 75% 46% / 0.26) 0%,
-      hsl(354 75% 46% / 0.26) 25%,
-      hsl(45 92% 50% / 0.28) 25%,
-      hsl(45 92% 50% / 0.28) 75%,
-      hsl(354 75% 46% / 0.26) 75%,
-      hsl(354 75% 46% / 0.26) 100%
-    );
-  }
-
-  /* SAUDI ARABIA - green field with faint white band */
-  [data-theme="saudi"] body::before {
-    opacity: 1;
-    background-image:
-      linear-gradient(to bottom, transparent 44%, hsl(0 0% 100% / 0.24) 44%, hsl(0 0% 100% / 0.24) 56%, transparent 56%),
-      linear-gradient(0deg, hsl(150 80% 28% / 0.26), hsl(150 80% 28% / 0.26));
-  }
-
-  /* MOROCCO - red field with green star */
+  [data-theme="argentina"] body::before,
+  [data-theme="brazil"] body::before,
+  [data-theme="portugal"] body::before,
+  [data-theme="spain"] body::before,
+  [data-theme="saudi"] body::before,
   [data-theme="morocco"] body::before {
-    opacity: 1;
-    background-image:
-      radial-gradient(circle at 50% 50%, hsl(150 70% 34% / 0.34) 0%, hsl(150 70% 34% / 0.34) 9%, transparent 10%),
-      linear-gradient(0deg, hsl(356 72% 46% / 0.24), hsl(356 72% 46% / 0.24));
+    opacity: 0.22;
   }
+
+  [data-theme="argentina"] body::after,
+  [data-theme="brazil"] body::after,
+  [data-theme="portugal"] body::after,
+  [data-theme="spain"] body::after,
+  [data-theme="saudi"] body::after,
+  [data-theme="morocco"] body::after {
+    opacity: 1;
+  }
+
+  [data-theme="argentina"] body::before { background-image: url("/themes/argentina.jpg"); }
+  [data-theme="brazil"] body::before { background-image: url("/themes/brazil.jpg"); }
+  [data-theme="portugal"] body::before { background-image: url("/themes/portugal.jpg"); }
+  [data-theme="spain"] body::before { background-image: url("/themes/spain.jpg"); }
+  [data-theme="saudi"] body::before { background-image: url("/themes/saudi.jpg"); }
+  [data-theme="morocco"] body::before { background-image: url("/themes/morocco.jpg"); }
 }
 
 
