@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Trash2, FileText, Check, Download, Plus, X, Pencil } from 'lucide-react';
 import { useAttendance, useAddAttendance, useUpdateAttendance, useDeleteAttendance } from '@/hooks/useAttendance';
 import { useProfiles } from '@/hooks/useProfiles';
+import { useActiveTerm } from '@/hooks/useAcademicTerms';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,7 @@ export const AttendanceSection = () => {
   const { hasPermission, user, profile } = useAuth();
   const { data: attendance = [], isLoading: attendanceLoading } = useAttendance();
   const { data: profiles = [], isLoading: profilesLoading } = useProfiles();
+  const { data: activeTerm } = useActiveTerm();
   const addAttendance = useAddAttendance();
   const updateAttendance = useUpdateAttendance();
   const deleteAttendance = useDeleteAttendance();
