@@ -145,10 +145,16 @@ export const AttendanceSection = () => {
     doc.setLineWidth(0.5);
     doc.line(20, 25, 190, 25);
 
+    const termLabel = activeTerm
+      ? `${activeTerm.season} ${activeTerm.year} - Trimester ${activeTerm.trimester_number}`
+      : 'N/A';
+
     doc.setFontSize(12);
     doc.setTextColor(80, 80, 80);
-    doc.text(`Subject: ${record.subject}`, 20, 35);
-    doc.text(`Date: ${format(new Date(record.date), 'dd MMM yyyy')}`, 20, 42);
+    doc.text('Batch: 49 D', 20, 35);
+    doc.text(`Semester: ${termLabel}`, 20, 42);
+    doc.text(`Subject: ${record.subject}`, 20, 49);
+    doc.text(`Date: ${format(new Date(record.date), 'dd MMM yyyy')}`, 20, 56);
     
     doc.setFillColor(240, 249, 255);
     doc.roundedRect(130, 30, 60, 25, 3, 3, 'F');
