@@ -490,6 +490,88 @@
 
 
 
+/* ============ Flag-themed background watermark per theme ============ */
+@layer base {
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  /* ARGENTINA - sky-blue / white / sky-blue bands + gold sun */
+  [data-theme="argentina"] body::before {
+    opacity: 1;
+    background-image:
+      radial-gradient(circle at 50% 50%, hsl(45 95% 55% / 0.16) 0%, transparent 22%),
+      linear-gradient(
+        to bottom,
+        hsl(205 70% 55% / 0.12) 0%,
+        hsl(205 70% 55% / 0.12) 33%,
+        hsl(0 0% 100% / 0.10) 33%,
+        hsl(0 0% 100% / 0.10) 66%,
+        hsl(205 70% 55% / 0.12) 66%,
+        hsl(205 70% 55% / 0.12) 100%
+      );
+  }
+
+  /* BRAZIL - green field, yellow diamond, blue disc */
+  [data-theme="brazil"] body::before {
+    opacity: 1;
+    background-image:
+      radial-gradient(circle at 50% 50%, hsl(215 75% 45% / 0.14) 0%, hsl(215 75% 45% / 0.14) 12%, transparent 12.5%),
+      conic-gradient(from 45deg at 50% 50%, hsl(48 95% 52% / 0.14) 0deg, hsl(48 95% 52% / 0.14) 90deg, transparent 90deg, transparent 180deg, hsl(48 95% 52% / 0.14) 180deg, hsl(48 95% 52% / 0.14) 270deg, transparent 270deg),
+      linear-gradient(0deg, hsl(145 80% 32% / 0.10), hsl(145 80% 32% / 0.10));
+  }
+
+  /* PORTUGAL - green / red split with gold ring */
+  [data-theme="portugal"] body::before {
+    opacity: 1;
+    background-image:
+      radial-gradient(circle at 40% 50%, transparent 0%, transparent 7%, hsl(45 85% 50% / 0.18) 7.5%, hsl(45 85% 50% / 0.18) 10%, transparent 10.5%),
+      linear-gradient(to right, hsl(140 70% 30% / 0.13) 0%, hsl(140 70% 30% / 0.13) 40%, hsl(4 78% 50% / 0.12) 40%, hsl(4 78% 50% / 0.12) 100%);
+  }
+
+  /* SPAIN - red / gold / red horizontal bands */
+  [data-theme="spain"] body::before {
+    opacity: 1;
+    background-image: linear-gradient(
+      to bottom,
+      hsl(354 75% 46% / 0.13) 0%,
+      hsl(354 75% 46% / 0.13) 25%,
+      hsl(45 92% 50% / 0.14) 25%,
+      hsl(45 92% 50% / 0.14) 75%,
+      hsl(354 75% 46% / 0.13) 75%,
+      hsl(354 75% 46% / 0.13) 100%
+    );
+  }
+
+  /* SAUDI ARABIA - green field with faint white band */
+  [data-theme="saudi"] body::before {
+    opacity: 1;
+    background-image:
+      linear-gradient(to bottom, transparent 44%, hsl(0 0% 100% / 0.12) 44%, hsl(0 0% 100% / 0.12) 56%, transparent 56%),
+      linear-gradient(0deg, hsl(150 80% 28% / 0.13), hsl(150 80% 28% / 0.13));
+  }
+
+  /* MOROCCO - red field with green star */
+  [data-theme="morocco"] body::before {
+    opacity: 1;
+    background-image:
+      radial-gradient(circle at 50% 50%, hsl(150 70% 34% / 0.18) 0%, hsl(150 70% 34% / 0.18) 9%, transparent 10%),
+      linear-gradient(0deg, hsl(356 72% 46% / 0.12), hsl(356 72% 46% / 0.12));
+  }
+}
+
+
+
 @layer base {
   * {
     @apply border-border;
