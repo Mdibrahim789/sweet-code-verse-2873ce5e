@@ -527,7 +527,8 @@
     opacity: 1;
     background-image:
       radial-gradient(circle at 50% 50%, hsl(215 75% 45% / 0.14) 0%, hsl(215 75% 45% / 0.14) 12%, transparent 12.5%),
-      conic-gradient(from 45deg at 50% 50%, hsl(48 95% 52% / 0.14) 0deg, hsl(48 95% 52% / 0.14) 90deg, transparent 90deg, transparent 180deg, hsl(48 95% 52% / 0.14) 180deg, hsl(48 95% 52% / 0.14) 270deg, transparent 270deg);
+      conic-gradient(from 45deg at 50% 50%, hsl(48 95% 52% / 0.14) 0deg, hsl(48 95% 52% / 0.14) 90deg, transparent 90deg, transparent 180deg, hsl(48 95% 52% / 0.14) 180deg, hsl(48 95% 52% / 0.14) 270deg, transparent 270deg),
+      linear-gradient(0deg, hsl(145 80% 32% / 0.10), hsl(145 80% 32% / 0.10));
   }
 
   /* PORTUGAL - green / red split with gold ring */
