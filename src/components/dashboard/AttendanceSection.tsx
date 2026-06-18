@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Trash2, FileText, Check, Download, Plus, X, Pencil } from 'lucide-react';
 import { useAttendance, useAddAttendance, useUpdateAttendance, useDeleteAttendance } from '@/hooks/useAttendance';
 import { useProfiles } from '@/hooks/useProfiles';
+import { useActiveTerm } from '@/hooks/useAcademicTerms';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,7 @@ export const AttendanceSection = () => {
   const { hasPermission, user, profile } = useAuth();
   const { data: attendance = [], isLoading: attendanceLoading } = useAttendance();
   const { data: profiles = [], isLoading: profilesLoading } = useProfiles();
+  const { data: activeTerm } = useActiveTerm();
   const addAttendance = useAddAttendance();
   const updateAttendance = useUpdateAttendance();
   const deleteAttendance = useDeleteAttendance();
@@ -143,19 +145,25 @@ export const AttendanceSection = () => {
     doc.setLineWidth(0.5);
     doc.line(20, 25, 190, 25);
 
+    const termLabel = activeTerm
+      ? `${activeTerm.season} ${activeTerm.year} - Trimester ${activeTerm.trimester_number}`
+      : 'N/A';
+
     doc.setFontSize(12);
     doc.setTextColor(80, 80, 80);
-    doc.text(`Subject: ${record.subject}`, 20, 35);
-    doc.text(`Date: ${format(new Date(record.date), 'dd MMM yyyy')}`, 20, 42);
+    doc.text('Batch: 49 D', 20, 35);
+    doc.text(`Semester: ${termLabel}`, 20, 42);
+    doc.text(`Subject: ${record.subject}`, 20, 49);
+    doc.text(`Date: ${format(new Date(record.date), 'dd MMM yyyy')}`, 20, 56);
     
     doc.setFillColor(240, 249, 255);
-    doc.roundedRect(130, 30, 60, 25, 3, 3, 'F');
+    doc.roundedRect(130, 31, 60, 25, 3, 3, 'F');
     doc.setFontSize(10);
     doc.setTextColor(59, 130, 246);
-    doc.text(`Present: ${presentCount}`, 135, 38);
-    doc.text(`Absent: ${absentCount}`, 135, 45);
+    doc.text(`Present: ${presentCount}`, 135, 39);
+    doc.text(`Absent: ${absentCount}`, 135, 46);
     if (manualCount > 0) {
-      doc.text(`Manual: ${manualCount}`, 135, 52);
+      doc.text(`Manual: ${manualCount}`, 135, 53);
     }
 
     const tableData = studentProfiles.map((p, index) => {
@@ -178,7 +186,7 @@ export const AttendanceSection = () => {
     });
 
     autoTable(doc, {
-      startY: 55,
+      startY: 63,
       head: [['#', 'Student ID', 'Name', 'Status']],
       body: tableData,
       headStyles: {
