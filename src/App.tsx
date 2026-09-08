@@ -32,7 +32,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="worldcup">
+    <ThemeProvider defaultTheme="dark">
       <AuthProvider>
         <GuestProvider>
           <TooltipProvider>

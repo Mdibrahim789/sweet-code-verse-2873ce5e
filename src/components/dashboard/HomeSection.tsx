@@ -8,10 +8,8 @@ import { useGallery } from '@/hooks/useGallery';
 import { useBusLocations, useBusSchedules } from '@/hooks/useBus';
 import { ExamCountdown } from './ExamCountdown';
 import { HomeSectionSkeleton } from './SectionSkeletons';
-import { WorldCupCard } from './WorldCupCard';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
-import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -344,8 +342,7 @@ export const HomeSection = () => {
   const isGuest = isGuestMode && !user;
   
   const { hasPermission } = useAuth();
-  const { theme, options: themeOptions } = useTheme();
-  const activeThemeLabel = themeOptions.find((t) => t.id === theme)?.label ?? theme;
+
   const { data: routines = [], isLoading: routinesLoading } = useRoutines();
   const { data: notices = [], isLoading: noticesLoading } = useNotices();
   const { data: polls = [], isLoading: pollsLoading } = usePolls();
@@ -513,24 +510,7 @@ export const HomeSection = () => {
 
   return (
     <div className="animate-fade-up space-y-6">
-      {/* World Cup festive banner - neon */}
-      <div className="neon-grid neon-border relative overflow-hidden rounded-xl bg-card p-4">
-        <div className="absolute -right-4 -top-6 rotate-12 select-none text-7xl opacity-20">⚽</div>
-        <div className="absolute right-20 bottom-1 select-none text-4xl opacity-20">🏆</div>
-        <span className="absolute right-3 top-3 z-10 rounded-full border border-accent/40 bg-background/60 px-2.5 py-0.5 text-[10px] font-semibold text-accent text-glow-gold backdrop-blur-sm">
-          Theme: {activeThemeLabel}
-        </span>
-        <div className="relative flex items-center gap-3">
-          <span className="animate-neon-pulse text-3xl drop-shadow-[0_0_10px_hsl(var(--accent)/0.7)]">🏆</span>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-accent text-glow-gold">World Cup Season</p>
-            <h3 className="font-display text-lg font-extrabold text-primary text-glow">Game On — Good Luck to All! 🥅</h3>
-          </div>
-        </div>
-      </div>
 
-      {/* World Cup schedule + results */}
-      <WorldCupCard />
 
 
       {/* 1. Latest Notice - First (encrypted for guests) */}

@@ -2,16 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export type SiteTheme =
-  | 'worldcup'
-  | 'light'
-  | 'dark'
-  | 'argentina'
-  | 'brazil'
-  | 'portugal'
-  | 'spain'
-  | 'saudi'
-  | 'morocco';
+export type SiteTheme = 'dark' | 'light';
 
 export interface ThemeOption {
   id: SiteTheme;
@@ -20,18 +11,11 @@ export interface ThemeOption {
 }
 
 export const THEME_OPTIONS: ThemeOption[] = [
-  { id: 'worldcup', label: 'World Cup (Neon)', swatch: ['#06060f', '#1f9bff', '#f5c542', '#ff2e5b'] },
-  { id: 'light', label: 'Light / White', swatch: ['#ffffff', '#2848b8', '#e5e9f0', '#16223a'] },
   { id: 'dark', label: 'Classic Dark', swatch: ['#12161f', '#4a8bf0', '#1c2230', '#e8edf5'] },
-  { id: 'argentina', label: 'Argentina', swatch: ['#75aadb', '#ffffff', '#f6b40e', '#1c3a5e'] },
-  { id: 'brazil', label: 'Brazil', swatch: ['#009c3b', '#ffdf00', '#1f4fb8', '#0b3d1f'] },
-  { id: 'portugal', label: 'Portugal', swatch: ['#da291c', '#006600', '#dba111', '#ffffff'] },
-  { id: 'spain', label: 'Spain', swatch: ['#aa151b', '#f1bf00', '#ffffff', '#5c0c10'] },
-  { id: 'saudi', label: 'Saudi Arabia', swatch: ['#006c35', '#ffffff', '#0a7a3f', '#063d1f'] },
-  { id: 'morocco', label: 'Morocco', swatch: ['#c1272d', '#006233', '#ffffff', '#5c1115'] },
+  { id: 'light', label: 'Light / White', swatch: ['#ffffff', '#2848b8', '#e5e9f0', '#16223a'] },
 ];
 
-const DARK_THEMES: SiteTheme[] = ['worldcup', 'dark'];
+const DARK_THEMES: SiteTheme[] = ['dark'];
 const VALID_THEMES = THEME_OPTIONS.map((t) => t.id);
 
 interface ThemeContextType {
@@ -54,7 +38,7 @@ const applyThemeToDom = (theme: SiteTheme) => {
 export const ThemeProvider: React.FC<{
   children: React.ReactNode;
   defaultTheme?: SiteTheme;
-}> = ({ children, defaultTheme = 'worldcup' }) => {
+}> = ({ children, defaultTheme = 'dark' }) => {
   const [theme, setThemeState] = useState<SiteTheme>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('site-theme') as SiteTheme | null;

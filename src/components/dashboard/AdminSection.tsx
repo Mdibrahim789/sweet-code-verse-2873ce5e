@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Crown, Key, Users, Trash2, Copy, Shield, UserPlus, GraduationCap, Palette, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { AcademicTermsManager } from './AcademicTermsManager';
-import { MatchesManager } from './MatchesManager';
 import { useTheme } from '@/contexts/ThemeContext';
 
 const PERMISSIONS = [
@@ -275,8 +274,7 @@ export const AdminSection = () => {
         </div>
       </Card>
 
-      {/* World Cup Matches */}
-      <MatchesManager />
+
 
       <AcademicTermsManager />
 
