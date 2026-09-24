@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { Camera, Mail, Phone, MapPin, Droplets, User, GraduationCap, IdCard, Crown, Shield, BookOpen, Calendar } from 'lucide-react';
+import { Camera, Mail, Phone, MapPin, Droplets, User, GraduationCap, IdCard, Crown, Shield, BookOpen, Calendar, Sparkles } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { StudentResultModal } from './StudentResultModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,6 +23,7 @@ export const ProfileSection = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState({
@@ -213,10 +215,23 @@ export const ProfileSection = () => {
             {/* Name and Role */}
             <div className="flex-1 text-center sm:text-left">
               <h2 className="text-2xl font-bold">{profile.name}</h2>
-              <Badge variant={roleInfo.variant} className="mt-2 gap-1">
-                <RoleIcon className="w-3 h-3" />
-                {roleInfo.label}
-              </Badge>
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-2">
+                <Badge variant={roleInfo.variant} className="gap-1">
+                  <RoleIcon className="w-3 h-3" />
+                  {roleInfo.label}
+                </Badge>
+                {profile.student_id && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowResultModal(true)}
+                    className="h-6 text-xs gap-1.5 border-primary/40 bg-primary/10 hover:bg-primary/20 text-primary font-medium px-2.5 rounded-full"
+                  >
+                    <Sparkles className="w-3 h-3 text-cyan-300" />
+                    Check ERP Result
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>
@@ -386,6 +401,45 @@ export const ProfileSection = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Uttara University Academic Result Card */}
+      {profile.student_id && (
+        <Card className="border-primary/30 bg-gradient-to-br from-card via-card to-primary/5 shadow-lg overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-44 h-44 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <GraduationCap className="w-5 h-5 text-primary" />
+              Uttara University Academic Result
+            </CardTitle>
+            <Badge variant="outline" className="text-[10px] uppercase tracking-wider text-primary border-primary/30 bg-primary/10 font-mono">
+              Live ERP
+            </Badge>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Verify your semester GPA, registration details, and official grade records live from the Uttara University ERP system.
+            </p>
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <Button
+                onClick={() => setShowResultModal(true)}
+                className="gap-2 font-semibold shadow-md shadow-primary/25 hover:shadow-primary/40"
+              >
+                <Sparkles className="w-4 h-4 text-cyan-300" />
+                View ERP Result
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Result Modal */}
+      <StudentResultModal
+        isOpen={showResultModal}
+        onClose={() => setShowResultModal(false)}
+        studentId={profile.student_id}
+        dateOfBirth={profile.date_of_birth}
+        studentName={profile.name}
+      />
     </div>
   );
 };
