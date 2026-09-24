@@ -16,6 +16,9 @@ export interface Profile {
   date_of_birth: string | null;
   dob_status?: 'pending' | 'verified' | 'rejected' | null;
   dob_rejection_reason?: string | null;
+  academic_results?: any[] | null;
+  results_last_synced?: string | null;
+  cgpa?: number | null;
   created_at: string;
   updated_at: string;
   role?: 'master' | 'cr' | 'student' | 'teacher';

@@ -18,6 +18,7 @@ const PUBLIC_PATHS = ['/bus', '/about'];
 const SECTION_TITLES: Record<string, string> = {
   '/home': 'Dashboard',
   '/academic': 'Academic',
+  '/results': 'Academic Results',
   '/students': 'Students',
   '/faculty': 'Faculty',
   '/notices': 'Notices',

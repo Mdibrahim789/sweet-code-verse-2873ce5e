@@ -6,10 +6,12 @@ const corsHeaders = {
 };
 
 interface RequestBody {
+  mode?: "single" | "all";
   sid: string;
   dob: string;
-  acyear: string;
-  semid: string;
+  acyear?: string;
+  semid?: string;
+  years?: string[];
 }
 
 const SEMESTER_NAMES: Record<string, string> = {
@@ -18,43 +20,19 @@ const SEMESTER_NAMES: Record<string, string> = {
   "3": "Fall",
 };
 
-serve(async (req) => {
-  // Handle CORS preflight
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
+async function fetchSingleSemester(
+  cleanSid: string,
+  cleanDob: string,
+  cleanAcyear: string,
+  cleanSemid: string
+) {
+  const targetUrl = `https://erp.uttarauniversity.edu.bd/online-result?sid=${encodeURIComponent(
+    cleanSid
+  )}&dob=${encodeURIComponent(cleanDob)}&acyear=${encodeURIComponent(
+    cleanAcyear
+  )}&semid=${encodeURIComponent(cleanSemid)}`;
 
   try {
-    const { sid, dob, acyear, semid } = (await req.json()) as RequestBody;
-
-    if (!sid || !dob || !acyear || !semid) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Missing required parameters: sid, dob, acyear, semid",
-        }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    const cleanSid = sid.trim().toUpperCase();
-    const cleanDob = dob.trim();
-    const cleanAcyear = acyear.trim();
-    const cleanSemid = semid.trim();
-
-    // Target URL on Uttara University ERP
-    const targetUrl = `https://erp.uttarauniversity.edu.bd/online-result?sid=${encodeURIComponent(
-      cleanSid
-    )}&dob=${encodeURIComponent(cleanDob)}&acyear=${encodeURIComponent(
-      cleanAcyear
-    )}&semid=${encodeURIComponent(cleanSemid)}`;
-
-    console.log(`Fetching result for SID: ${cleanSid}, Year: ${cleanAcyear}, Sem: ${cleanSemid}`);
-
-    // Fetch with redirect follow
     const response = await fetch(targetUrl, {
       method: "GET",
       headers: {
@@ -68,21 +46,10 @@ serve(async (req) => {
 
     const html = await response.text();
 
-    // Check for toastr error
-    const toastrErrorMatch = html.match(/toastr\.error\(\s*["']([^"']+)["']\s*\)/i);
-    if (toastrErrorMatch) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: toastrErrorMatch[1],
-        }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+    if (html.includes("toastr.error")) {
+      return null;
     }
 
-    // Parse Student Information Table
     const info: Record<string, string> = {};
     const rowRegex =
       /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<\/tr>/gi;
@@ -99,21 +66,13 @@ serve(async (req) => {
       }
     }
 
-    // Verify if we found valid student result
     if (!info["semester gpa"] && !info["name"]) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error:
-            "No result published or student information not found for this academic session.",
-        }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return null;
     }
 
-    // Parse course grades if a detailed course breakdown table exists
+    const gpaNum = parseFloat(info["semester gpa"] || "0");
+
+    // Course breakdown if present
     const courses: Array<{
       code?: string;
       title?: string;
@@ -122,7 +81,6 @@ serve(async (req) => {
       point?: string;
     }> = [];
 
-    // Course table parser (if available in HTML)
     const courseRowRegex =
       /<tr[^>]*>\s*<td[^>]*>(.*?)<\/td>\s*<td[^>]*>(.*?)<\/td>\s*<td[^>]*>(.*?)<\/td>\s*<td[^>]*>(.*?)<\/td>\s*(?:<td[^>]*>(.*?)<\/td>)?\s*<\/tr>/gi;
     let courseMatch;
@@ -133,7 +91,6 @@ serve(async (req) => {
       const col4 = courseMatch[4]?.replace(/<[^>]+>/g, "").trim();
       const col5 = courseMatch[5]?.replace(/<[^>]+>/g, "").trim();
 
-      // Check if this looks like a course row
       if (
         col1 &&
         col2 &&
@@ -152,25 +109,165 @@ serve(async (req) => {
       }
     }
 
-    const resultData = {
-      id: info["id"] || cleanSid,
+    return {
+      academicYear: cleanAcyear,
+      semesterId: cleanSemid,
+      semesterName: SEMESTER_NAMES[cleanSemid] || "Semester",
+      semesterGpa: info["semester gpa"] || "0.00",
+      numericGpa: isNaN(gpaNum) ? 0 : gpaNum,
       registrationNo: info["registration no"] || "",
       name: info["name"] || "",
       department: info["department"] || "",
       program: info["program"] || "",
-      semesterGpa: info["semester gpa"] || "",
-      academicYear: cleanAcyear,
-      semesterId: cleanSemid,
-      semesterName: SEMESTER_NAMES[cleanSemid] || "Semester",
+      status: gpaNum > 0 ? "completed" : "pending",
       courses: courses.length > 0 ? courses : undefined,
       officialPortalUrl: targetUrl,
-      queriedAt: new Date().toISOString(),
     };
+  } catch (err) {
+    console.error(`Error fetching year ${cleanAcyear} sem ${cleanSemid}:`, err);
+    return null;
+  }
+}
+
+serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
+  try {
+    const body = (await req.json()) as RequestBody;
+    const { mode = "single", sid, dob, acyear, semid, years } = body;
+
+    if (!sid || !dob) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Missing required parameters: sid and dob are required.",
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const cleanSid = sid.trim().toUpperCase();
+    const cleanDob = dob.trim();
+
+    // Mode: ALL SEMESTERS (fetch historical and active semesters in parallel)
+    if (mode === "all") {
+      const targetYears =
+        years && Array.isArray(years) && years.length > 0
+          ? years
+          : ["2024", "2025", "2026", "2027"];
+
+      const tasks: Promise<any>[] = [];
+      for (const yr of targetYears) {
+        for (const sId of ["1", "2", "3"]) {
+          tasks.push(fetchSingleSemester(cleanSid, cleanDob, yr, sId));
+        }
+      }
+
+      const rawResults = await Promise.all(tasks);
+      const validResults = rawResults.filter((r) => r !== null);
+
+      if (validResults.length === 0) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "No results found on ERP for this student ID and Date of Birth.",
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      // Sort chronologically: by year ascending, then by semester ascending
+      validResults.sort((a, b) => {
+        const yrDiff = parseInt(a.academicYear) - parseInt(b.academicYear);
+        if (yrDiff !== 0) return yrDiff;
+        return parseInt(a.semesterId) - parseInt(b.semesterId);
+      });
+
+      // Calculate CGPA
+      const completed = validResults.filter(
+        (r) => r.status === "completed" && r.numericGpa > 0
+      );
+      const totalGpa = completed.reduce((sum, r) => sum + r.numericGpa, 0);
+      const cgpa =
+        completed.length > 0
+          ? Number((totalGpa / completed.length).toFixed(2))
+          : 0;
+      const highestGpa =
+        completed.length > 0
+          ? Math.max(...completed.map((r) => r.numericGpa))
+          : 0;
+
+      const firstRecord = validResults[0];
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          data: {
+            id: cleanSid,
+            name: firstRecord.name || "",
+            registrationNo: firstRecord.registrationNo || "",
+            department: firstRecord.department || "",
+            program: firstRecord.program || "",
+            cgpa,
+            highestGpa,
+            completedCount: completed.length,
+            totalCount: validResults.length,
+            semesters: validResults,
+            syncedAt: new Date().toISOString(),
+          },
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Default: SINGLE SEMESTER MODE
+    if (!acyear || !semid) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Missing acyear or semid for single semester query.",
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const singleResult = await fetchSingleSemester(
+      cleanSid,
+      cleanDob,
+      acyear.trim(),
+      semid.trim()
+    );
+
+    if (!singleResult) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error:
+            "No result published or student information not found for this academic session.",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
 
     return new Response(
       JSON.stringify({
         success: true,
-        data: resultData,
+        data: singleResult,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, BookOpen, Bell, Bus, MoreHorizontal, Users, GraduationCap, ClipboardCheck, BarChart3, Image, Info, Shield, User, LogOut, LogIn, Wrench } from 'lucide-react';
+import { Home, BookOpen, Bell, Bus, MoreHorizontal, Users, GraduationCap, ClipboardCheck, BarChart3, Image, Info, Shield, User, LogOut, LogIn, Wrench, Award } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
@@ -17,6 +17,7 @@ const DEFAULT_TABS = [
 ];
 
 const DEFAULT_MORE_ITEMS = [
+  { label: 'Results', icon: Award, path: '/results' },
   { label: 'Bus', icon: Bus, path: '/bus' },
   { label: 'Faculty', icon: GraduationCap, path: '/faculty' },
   { label: 'Attendance', icon: ClipboardCheck, path: '/attendance' },

@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Zap, Home, BookOpen, Users, GraduationCap, Bell, ClipboardCheck, Vote, X, Crown, Image, Bus, LogIn, Lock, Heart, Wrench } from 'lucide-react';
+import { Zap, Home, BookOpen, Users, GraduationCap, Bell, ClipboardCheck, Vote, X, Crown, Image, Bus, LogIn, Lock, Heart, Wrench, Award } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,7 @@ const GUEST_ALLOWED_PATHS = ['/bus', '/about'];
 const navItems: NavItem[] = [
   { path: '/home', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
   { path: '/academic', label: 'Academic', icon: <BookOpen className="w-5 h-5" /> },
+  { path: '/results', label: 'Results', icon: <Award className="w-5 h-5" /> },
   { path: '/students', label: 'Students', icon: <Users className="w-5 h-5" /> },
   { path: '/faculty', label: 'Faculty', icon: <GraduationCap className="w-5 h-5" /> },
   { path: '/notices', label: 'Notices', icon: <Bell className="w-5 h-5" /> },
