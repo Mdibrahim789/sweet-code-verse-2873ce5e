@@ -28,6 +28,81 @@ import {
 
 const DAYS = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
+const BENGALI_DAYS_MAP: Record<string, string> = {
+  'শনিবার': 'Saturday',
+  'রবিবার': 'Sunday',
+  'রোববার': 'Sunday',
+  'সোমবার': 'Monday',
+  'মঙ্গলবার': 'Tuesday',
+  'বুধবার': 'Wednesday',
+  'বৃহস্পতিবার': 'Thursday',
+  'শুক্রবার': 'Friday',
+};
+
+// Clean outer punctuation (hyphens, dashes, colons) and whitespace
+const stripPunctuation = (str: string): string => {
+  return str.replace(/^[\s\u2014\-:]+/, '').replace(/[\s\u2014\-:]+$/, '').trim();
+};
+
+// Normalize location name: strip outer hyphens, colons, dashes, and extra spaces
+const normalizeLocationName = (name: string): string => {
+  return stripPunctuation(name)
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+};
+
+const isLocationExactMatch = (loc1: string, loc2: string): boolean => {
+  return normalizeLocationName(loc1) === normalizeLocationName(loc2);
+};
+
+// Check if a line is a header (title, day, or divider) and optionally return detected day
+const checkHeaderOrDay = (line: string): { isHeader: boolean; detectedDay?: string } => {
+  const trimmed = line.trim();
+  if (!trimmed || trimmed.startsWith('---') || trimmed.startsWith('===') || trimmed.startsWith('___')) {
+    return { isHeader: true };
+  }
+  
+  const clean = stripPunctuation(trimmed);
+  if (!clean) return { isHeader: true };
+
+  const lower = clean.toLowerCase();
+  if (
+    clean.includes('বাস সিডিউল') ||
+    clean.includes('বাস শিডিউল') ||
+    clean.includes('বাস রুট') ||
+    lower.includes('bus schedule') ||
+    lower.includes('schedule')
+  ) {
+    return { isHeader: true };
+  }
+
+  // Direction headers
+  if (
+    clean.includes('আপ টাইম') ||
+    clean.includes('ডাউন টাইম') ||
+    lower.includes('up time') ||
+    lower.includes('down time')
+  ) {
+    return { isHeader: true };
+  }
+
+  // Check Bengali days
+  for (const [bnDay, enDay] of Object.entries(BENGALI_DAYS_MAP)) {
+    if (clean.includes(bnDay)) {
+      return { isHeader: true, detectedDay: enDay };
+    }
+  }
+
+  // Check English days
+  for (const day of DAYS) {
+    if (lower === day.toLowerCase() || lower.startsWith(day.toLowerCase())) {
+      return { isHeader: true, detectedDay: day };
+    }
+  }
+
+  return { isHeader: false };
+};
+
 export const BusSection = () => {
   const { user, profile, isMaster, hasPermission, refreshProfile } = useAuth();
   const canManageBus = hasPermission('bus');
@@ -39,6 +114,7 @@ export const BusSection = () => {
   const [selectedDay, setSelectedDay] = useState('Friday');
   const [showLocationSettings, setShowLocationSettings] = useState(false);
   const [showBulkImport, setShowBulkImport] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [newLocation, setNewLocation] = useState('');
   const [bulkText, setBulkText] = useState('');
   const [newSchedule, setNewSchedule] = useState<{
@@ -121,37 +197,32 @@ export const BusSection = () => {
   };
 
   // Extract locations from bulk text that don't exist yet
-  const extractNewLocations = (text: string): string[] => {
+  const extractNewLocations = (text: string, currentLocations: typeof locations): string[] => {
     const lines = text.split('\n');
     const foundLocations: string[] = [];
     
     for (const line of lines) {
       const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('---')) continue;
+      if (!trimmed) continue;
       
-      // Skip direction markers
-      if (trimmed.includes('আপ টাইম') || trimmed.includes('ডাউন টাইম') || 
-          trimmed.toLowerCase().includes('up time') || trimmed.toLowerCase().includes('down time')) {
-        continue;
-      }
+      const headerCheck = checkHeaderOrDay(trimmed);
+      if (headerCheck.isHeader) continue;
       
-      // Check if this is a location line (ends with - or contains only location name without time/bus)
-      if (trimmed.endsWith('-') || 
-          (!trimmed.match(/\d{1,2}[:.]\d{2}\s*(?:AM|PM)/i) && !trimmed.match(/BUS\s+/i))) {
-        const locationName = trimmed.replace(/-$/, '').replace(/:$/, '').trim();
-        if (locationName && !foundLocations.includes(locationName)) {
+      // Check if this is a location line (ends with - or : or doesn't have time/bus patterns)
+      const isTimeOrBus = trimmed.match(/\d{1,2}[:.]\d{2}\s*(?:AM|PM)/i) || trimmed.match(/BUS\s+/i);
+      const isLocationLine = trimmed.endsWith('-') || trimmed.endsWith(':') || !isTimeOrBus;
+      
+      if (isLocationLine) {
+        const locationName = stripPunctuation(trimmed);
+        if (locationName && !foundLocations.some(f => isLocationExactMatch(f, locationName))) {
           foundLocations.push(locationName);
         }
       }
     }
     
-    // Filter out locations that already exist
+    // Filter out locations that already exist in DB using EXACT match
     return foundLocations.filter(name => 
-      !locations.some(l => 
-        l.name.toLowerCase() === name.toLowerCase() ||
-        l.name.includes(name) ||
-        name.includes(l.name)
-      )
+      !currentLocations.some(l => isLocationExactMatch(l.name, name))
     );
   };
 
@@ -163,7 +234,7 @@ export const BusSection = () => {
 
     for (const line of lines) {
       const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('---') || trimmed.startsWith('বাস সিডিউল')) continue;
+      if (!trimmed) continue;
 
       // Check for direction markers
       if (trimmed.includes('আপ টাইম') || trimmed.toLowerCase().includes('up time')) {
@@ -175,25 +246,26 @@ export const BusSection = () => {
         continue;
       }
 
-      // Check if this is a location line (ends with - or : or contains only location name)
-      const isLocationLine = trimmed.endsWith('-') || trimmed.endsWith(':') ||
-        (!trimmed.match(/\d{1,2}[:.]\d{2}\s*(?:AM|PM)/i) && !trimmed.match(/BUS\s+/i));
+      // Skip title / day headers
+      const headerCheck = checkHeaderOrDay(trimmed);
+      if (headerCheck.isHeader) continue;
+
+      // Check if this is a location line
+      const isTimeOrBus = trimmed.match(/\d{1,2}[:.]\d{2}\s*(?:AM|PM)/i) || trimmed.match(/BUS\s+/i);
+      const isLocationLine = trimmed.endsWith('-') || trimmed.endsWith(':') || !isTimeOrBus;
       
       if (isLocationLine) {
-        currentLocation = trimmed.replace(/-$/, '').replace(/:$/, '').trim();
+        currentLocation = stripPunctuation(trimmed);
         continue;
       }
 
-      // Parse schedule line (e.g., "6:15 AM BUS 41" or "6:30 AM BUS 36")
+      // Parse schedule line (e.g., "06:15 AM BUS 41" or "08:30 AM BUS DD")
       const timeMatch = trimmed.match(/(\d{1,2}[:.]\d{2}\s*(?:AM|PM))/i);
       const busMatch = trimmed.match(/BUS\s+(\S+)/i);
 
       if (timeMatch && busMatch && currentLocation) {
-        const location = currentLocations.find(l => 
-          l.name.toLowerCase() === currentLocation.toLowerCase() ||
-          l.name.includes(currentLocation) ||
-          currentLocation.includes(l.name)
-        );
+        // Use EXACT normalized match so "শিববাড়ি ডুয়েট" does NOT merge into "শিববাড়ি"
+        const location = currentLocations.find(l => isLocationExactMatch(l.name, currentLocation));
 
         if (location) {
           schedules.push({
@@ -213,39 +285,51 @@ export const BusSection = () => {
   const [importStatus, setImportStatus] = useState<string>('');
 
   const handleBulkImport = async () => {
-    // First, find locations that need to be created
-    const newLocationNames = extractNewLocations(bulkText);
-    
-    if (newLocationNames.length > 0) {
-      setImportStatus(`Creating ${newLocationNames.length} new locations...`);
-      
-      // Add new locations first
-      for (const name of newLocationNames) {
-        await addLocation.mutateAsync(name);
-      }
-      
-      setImportStatus('Locations created. Importing schedules...');
-      
-      // Wait a moment for query to refetch
-      setTimeout(() => {
-        // Re-fetch locations will happen via invalidation, so we need to do parsing after
-        setImportStatus('Please click Import again to add schedules (locations created)');
-      }, 1000);
-      return;
-    }
+    if (!bulkText.trim()) return;
 
-    const parsed = parseBulkText(bulkText, selectedDay, locations);
-    if (parsed.length > 0) {
-      setImportStatus(`Importing ${parsed.length} schedules...`);
-      bulkAddSchedules.mutate(parsed, {
-        onSuccess: () => {
-          setBulkText('');
-          setShowBulkImport(false);
-          setImportStatus('');
+    setIsImporting(true);
+    try {
+      // Auto-detect day if mentioned in text (e.g. "শুক্রবার :" -> "Friday")
+      let targetDay = selectedDay;
+      for (const line of bulkText.split('\n')) {
+        const check = checkHeaderOrDay(line);
+        if (check.detectedDay) {
+          targetDay = check.detectedDay;
+          setSelectedDay(targetDay);
+          break;
         }
-      });
-    } else {
-      setImportStatus('No valid schedules found. Make sure locations exist first.');
+      }
+
+      // Step 1: Find locations that need to be created
+      const newLocationNames = extractNewLocations(bulkText, locations);
+      const allLocations = [...locations];
+      
+      if (newLocationNames.length > 0) {
+        setImportStatus(`Creating ${newLocationNames.length} new location(s)...`);
+        
+        for (const name of newLocationNames) {
+          const created = await addLocation.mutateAsync(name);
+          if (created) {
+            allLocations.push(created as BusLocation);
+          }
+        }
+      }
+
+      // Step 2: Parse bulk text with complete list of locations (including newly created ones)
+      const parsed = parseBulkText(bulkText, targetDay, allLocations);
+      if (parsed.length > 0) {
+        setImportStatus(`Importing ${parsed.length} schedules for ${targetDay}...`);
+        await bulkAddSchedules.mutateAsync(parsed);
+        setBulkText('');
+        setShowBulkImport(false);
+        setImportStatus('');
+      } else {
+        setImportStatus('No valid schedules found. Please check the text format.');
+      }
+    } catch (err: any) {
+      setImportStatus(`Import failed: ${err.message || 'Unknown error'}`);
+    } finally {
+      setIsImporting(false);
     }
   };
 
@@ -463,8 +547,11 @@ export const BusSection = () => {
                     <p><strong>Format:</strong> Locations auto-created if missing. "আপ টাইম" = Up, "ডাউন টাইম" = Down</p>
                   </div>
                   <div className="flex gap-2">
-                    <Button onClick={handleBulkImport} disabled={bulkAddSchedules.isPending || addLocation.isPending || !bulkText.trim()}>
-                      {addLocation.isPending ? 'Creating Locations...' : 'Import Schedules'}
+                    <Button 
+                      onClick={handleBulkImport} 
+                      disabled={isImporting || bulkAddSchedules.isPending || addLocation.isPending || !bulkText.trim()}
+                    >
+                      {isImporting ? 'Processing...' : 'Import Schedules'}
                     </Button>
                     <Button 
                       variant="destructive" 
