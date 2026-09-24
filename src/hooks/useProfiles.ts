@@ -14,6 +14,8 @@ export interface Profile {
   email: string | null;
   address: string | null;
   date_of_birth: string | null;
+  dob_status?: 'pending' | 'verified' | 'rejected' | null;
+  dob_rejection_reason?: string | null;
   created_at: string;
   updated_at: string;
   role?: 'master' | 'cr' | 'student' | 'teacher';

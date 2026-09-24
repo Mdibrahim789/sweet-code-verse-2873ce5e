@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Calendar, Cake, ShieldCheck, LogOut, Loader2 } from 'lucide-react';
+import { Calendar, Cake, ShieldAlert, ShieldCheck, LogOut, Loader2, Globe } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,6 +15,9 @@ interface MandatoryDobModalProps {
     id: string;
     name: string;
     student_id: string | null;
+    dob_status?: 'pending' | 'verified' | 'rejected' | null;
+    dob_rejection_reason?: string | null;
+    date_of_birth?: string | null;
   };
   onSuccess: () => void;
 }
@@ -24,19 +28,30 @@ export const MandatoryDobModal = ({
   onSuccess
 }: MandatoryDobModalProps) => {
   const { signOut } = useAuth();
-  const [dob, setDob] = useState('');
+  const [lang, setLang] = useState<'en' | 'bn'>('en'); // Default is English as requested
+  const [dob, setDob] = useState(profile.date_of_birth || '');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Maximum date allowed (must be at least in the past)
+  const isRejected = profile.dob_status === 'rejected';
+
+  // Maximum date allowed (past date)
   const maxDate = new Date().toISOString().split('T')[0];
-  // Minimum date reasonable for university students (e.g. 1950)
   const minDate = '1950-01-01';
+
+  // Toggle Language
+  const toggleLanguage = () => {
+    setLang(prev => (prev === 'en' ? 'bn' : 'en'));
+  };
 
   const handleSave = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
     if (!dob) {
-      toast.error('অনুগ্রহ করে আপনার জন্মতারিখ নির্বাচন করুন');
+      toast.error(
+        lang === 'en'
+          ? 'Please select your Date of Birth'
+          : 'অনুগ্রহ করে আপনার জন্মতারিখ নির্বাচন করুন'
+      );
       return;
     }
 
@@ -44,23 +59,41 @@ export const MandatoryDobModal = ({
     const today = new Date();
 
     if (isNaN(selectedDate.getTime()) || selectedDate >= today) {
-      toast.error('সঠিক জন্মতারিখ দিন (ভবিষ্যতের তারিখ গ্রহণযোগ্য নয়)');
+      toast.error(
+        lang === 'en'
+          ? 'Invalid date of birth. Future dates are not allowed.'
+          : 'সঠিক জন্মতারিখ দিন (ভবিষ্যতের তারিখ গ্রহণযোগ্য নয়)'
+      );
       return;
     }
 
     setIsSaving(true);
     try {
+      // When submitted, status becomes 'pending' for Admin/CR to verify, and clear rejection reason
       const { error } = await supabase
         .from('profiles')
-        .update({ date_of_birth: dob })
+        .update({
+          date_of_birth: dob,
+          dob_status: 'pending',
+          dob_rejection_reason: null
+        })
         .eq('id', profile.id);
 
       if (error) throw error;
 
-      toast.success('জন্মতারিখ সফলভাবে সংরক্ষিত হয়েছে!');
+      toast.success(
+        lang === 'en'
+          ? 'Date of Birth submitted for review!'
+          : 'জন্মতারিখ সফলভাবে পর্যালোচনার জন্য জমা দেওয়া হয়েছে!'
+      );
       onSuccess();
     } catch (err: any) {
-      toast.error(err.message || 'জন্মতারিখ সংরক্ষণে সমস্যা হয়েছে');
+      toast.error(
+        err.message ||
+          (lang === 'en'
+            ? 'Failed to save Date of Birth'
+            : 'জন্মতারিখ সংরক্ষণে সমস্যা হয়েছে')
+      );
     } finally {
       setIsSaving(false);
     }
@@ -73,34 +106,107 @@ export const MandatoryDobModal = ({
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        <DialogHeader className="text-center space-y-3">
-          <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center text-primary shadow-inner">
-            <Cake className="w-8 h-8 animate-bounce" />
+        {/* Language switch button */}
+        <div className="flex justify-between items-center pb-2">
+          <Badge
+            variant={isRejected ? 'destructive' : 'secondary'}
+            className="text-xs uppercase tracking-wider font-semibold"
+          >
+            {isRejected
+              ? (lang === 'en' ? 'Action Required: Rejected' : 'জরুরি: বাতিল করা হয়েছে')
+              : (lang === 'en' ? 'Verification Required' : 'ভেরিফিকেশন আবশ্যক')}
+          </Badge>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={toggleLanguage}
+            className="h-8 gap-1.5 text-xs font-semibold px-2.5 rounded-full hover:border-primary/50 transition-colors"
+          >
+            <Globe className="w-3.5 h-3.5 text-primary" />
+            {lang === 'en' ? 'বাংলা (Translate)' : 'English (Translate)'}
+          </Button>
+        </div>
+
+        <DialogHeader className="text-center space-y-3 pt-1">
+          <div
+            className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center shadow-inner border-2 ${
+              isRejected
+                ? 'bg-destructive/10 border-destructive/30 text-destructive'
+                : 'bg-primary/10 border-primary/30 text-primary'
+            }`}
+          >
+            {isRejected ? (
+              <ShieldAlert className="w-8 h-8 animate-pulse text-destructive" />
+            ) : (
+              <Cake className="w-8 h-8 animate-bounce text-primary" />
+            )}
           </div>
 
           <div className="space-y-1">
             <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight">
-              🎂 জন্মতারিখ প্রদান করুন
+              {isRejected
+                ? (lang === 'en' ? 'Date of Birth Rejected' : 'জন্মতারিখ বাতিল করা হয়েছে')
+                : (lang === 'en' ? 'Date of Birth Required' : 'জন্মতারিখ প্রদান করুন')}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground text-sm">
-              স্বাগতম, <span className="font-semibold text-foreground">{profile.name}</span>
-              {profile.student_id ? ` (ID: ${profile.student_id})` : ''}!
+              {lang === 'en' ? (
+                <>
+                  Welcome, <span className="font-semibold text-foreground">{profile.name}</span>
+                  {profile.student_id ? ` (ID: ${profile.student_id})` : ''}
+                </>
+              ) : (
+                <>
+                  স্বাগতম, <span className="font-semibold text-foreground">{profile.name}</span>
+                  {profile.student_id ? ` (আইডি: ${profile.student_id})` : ''}
+                </>
+              )}
             </DialogDescription>
           </div>
         </DialogHeader>
 
-        <div className="bg-primary/5 border border-primary/20 rounded-xl p-3.5 flex items-start gap-3 my-2">
-          <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            সাইটের সার্বিক সুবিধা এবং আপনার প্রোফাইল ভেরিফিকেশনের জন্য <strong>Date of Birth (জন্মতারিখ)</strong> যুক্ত করা বাধ্যতামূলক। এটি না দেওয়া পর্যন্ত অন্য পেজগুলোতে যাওয়া যাবে না।
-          </p>
-        </div>
+        {/* Notice Banner */}
+        {isRejected ? (
+          <div className="bg-destructive/10 border border-destructive/25 rounded-xl p-3.5 my-2 space-y-1.5 text-left">
+            <div className="flex items-center gap-2 text-destructive font-semibold text-xs">
+              <ShieldAlert className="w-4 h-4 shrink-0" />
+              <span>
+                {lang === 'en'
+                  ? 'Previously submitted Date of Birth was rejected by Admin/CR'
+                  : 'আপনার দেওয়া পূর্বের জন্মতারিখটি অ্যাডমিন/সিআর দ্বারা বাতিল করা হয়েছে'}
+              </span>
+            </div>
+            {profile.dob_rejection_reason && (
+              <div className="text-xs bg-background/60 p-2 rounded border border-destructive/20 text-foreground">
+                <span className="font-semibold text-destructive">
+                  {lang === 'en' ? 'Reason: ' : 'কারণ: '}
+                </span>
+                {profile.dob_rejection_reason}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {lang === 'en'
+                ? 'Please correct your Date of Birth with your official birth certificate or NID to continue using the portal.'
+                : 'সাইট ব্যবহারের জন্য অনুগ্রহ করে আপনার আসল জন্মসনদ বা এনআইডি অনুযায়ী সঠিক জন্মতারিখ পুনরায় দিন।'}
+            </p>
+          </div>
+        ) : (
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-3.5 flex items-start gap-3 my-2 text-left">
+            <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {lang === 'en'
+                ? 'For student identity verification and portal security, providing your Date of Birth is mandatory. Other sections will remain locked until submitted.'
+                : 'শিক্ষার্থীর পরিচয় যাচাই এবং পোর্টালের সার্বিক সুরক্ষার জন্য Date of Birth (জন্মতারিখ) প্রদান করা বাধ্যতামূলক। এটি না দেওয়া পর্যন্ত অন্য কোনো পেজে যাওয়া যাবে না।'}
+            </p>
+          </div>
+        )}
 
         <form onSubmit={handleSave} className="space-y-4 pt-1">
-          <div className="space-y-2">
+          <div className="space-y-2 text-left">
             <Label htmlFor="mandatory-dob" className="text-sm font-medium flex items-center gap-1.5">
               <Calendar className="w-4 h-4 text-primary" />
-              আপনার জন্মতারিখ (Date of Birth) *
+              {lang === 'en' ? 'Date of Birth (DOB) *' : 'আপনার জন্মতারিখ (Date of Birth) *'}
             </Label>
             <Input
               id="mandatory-dob"
@@ -112,6 +218,11 @@ export const MandatoryDobModal = ({
               onChange={(e) => setDob(e.target.value)}
               className="text-base py-5 cursor-pointer focus-visible:ring-primary"
             />
+            <p className="text-[11px] text-muted-foreground">
+              {lang === 'en'
+                ? 'Provide your real date of birth. Admin/CR will manually verify this information.'
+                : 'সঠিক জন্মতারিখ প্রদান করুন। অ্যাডমিন/সিআর এটি ম্যানুয়ালি যাচাই করবেন।'}
+            </p>
           </div>
 
           <Button
@@ -122,10 +233,12 @@ export const MandatoryDobModal = ({
             {isSaving ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                সংরক্ষণ করা হচ্ছে...
+                {lang === 'en' ? 'Saving & Submitting...' : 'সংরক্ষণ করা হচ্ছে...'}
               </>
+            ) : isRejected ? (
+              lang === 'en' ? 'Resubmit Date of Birth' : 'পুনরায় জন্মতারিখ জমা দিন'
             ) : (
-              'সংরক্ষণ করে এগিয়ে যান'
+              lang === 'en' ? 'Save & Continue' : 'সংরক্ষণ করে এগিয়ে যান'
             )}
           </Button>
 
@@ -136,7 +249,7 @@ export const MandatoryDobModal = ({
               className="text-xs text-muted-foreground hover:text-destructive transition-colors inline-flex items-center gap-1 underline underline-offset-4"
             >
               <LogOut className="w-3 h-3" />
-              অন্য অ্যাকাউন্টে লগইন করতে সাইন আউট করুন
+              {lang === 'en' ? 'Sign out to switch account' : 'অন্য অ্যাকাউন্টে লগইন করতে সাইন আউট করুন'}
             </button>
           </div>
         </form>

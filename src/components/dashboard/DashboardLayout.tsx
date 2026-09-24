@@ -37,8 +37,10 @@ export const DashboardLayout = () => {
   const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
 
-  // Require DOB for logged-in students whose date_of_birth is missing
-  const needsDob = Boolean(user && profile && !profile.date_of_birth);
+  // Require DOB for logged-in students whose date_of_birth is missing OR has been rejected by Admin/CR
+  const needsDob = Boolean(
+    user && profile && (!profile.date_of_birth || profile.dob_status === 'rejected')
+  );
 
   // Auto-enable guest mode for direct link access to public pages
   useEffect(() => {

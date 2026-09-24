@@ -13,7 +13,7 @@ import { EditModeToggle } from './EditModeToggle';
 import { StudentListSkeleton } from './SectionSkeletons';
 
 export const StudentsSection = () => {
-  const { hasPermission, user, isMaster } = useAuth();
+  const { hasPermission, user, isMaster, isCR } = useAuth();
   const { data: profiles = [], refetch, isLoading } = useProfiles();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,9 +21,11 @@ export const StudentsSection = () => {
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [dobFilter, setDobFilter] = useState<'all' | 'pending' | 'verified' | 'rejected'>('all');
 
   const canEdit = hasPermission('student');
   const canAdd = hasPermission('student') || isMaster();
+  const isAdminOrCr = Boolean(isMaster() || isCR() || hasPermission('student'));
 
   // Filter profiles - exclude teachers and masters, only show students and CRs
   // Sort by student_id for serial numbering
@@ -37,17 +39,38 @@ export const StudentsSection = () => {
       });
   }, [profiles]);
 
-  // Filter based on search query
+  const dobPendingCount = useMemo(
+    () => studentProfiles.filter(p => p.date_of_birth && (p.dob_status === 'pending' || !p.dob_status)).length,
+    [studentProfiles]
+  );
+  const dobRejectedCount = useMemo(
+    () => studentProfiles.filter(p => p.dob_status === 'rejected').length,
+    [studentProfiles]
+  );
+
+  // Filter based on search query and DOB status
   const filteredProfiles = useMemo(() => {
-    if (!searchQuery.trim()) return studentProfiles;
+    let list = studentProfiles;
+
+    if (isAdminOrCr && dobFilter !== 'all') {
+      if (dobFilter === 'pending') {
+        list = list.filter(p => p.date_of_birth && (p.dob_status === 'pending' || !p.dob_status));
+      } else if (dobFilter === 'verified') {
+        list = list.filter(p => p.dob_status === 'verified');
+      } else if (dobFilter === 'rejected') {
+        list = list.filter(p => p.dob_status === 'rejected');
+      }
+    }
+
+    if (!searchQuery.trim()) return list;
     
     const query = searchQuery.toLowerCase().trim();
-    return studentProfiles.filter((p) => 
+    return list.filter((p) => 
       p.name.toLowerCase().includes(query) ||
       (p.student_id && p.student_id.toLowerCase().includes(query)) ||
       (p.phone && p.phone.includes(query))
     );
-  }, [studentProfiles, searchQuery]);
+  }, [studentProfiles, searchQuery, dobFilter, isAdminOrCr]);
 
   const handleProfileClick = (profile: Profile) => {
     setSelectedProfile(profile);
@@ -84,6 +107,52 @@ export const StudentsSection = () => {
           )}
         </div>
       </div>
+
+      {/* Admin/CR Quick Filter Tabs for DOB Verification */}
+      {isAdminOrCr && (
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          <Button
+            size="sm"
+            variant={dobFilter === 'all' ? 'default' : 'outline'}
+            onClick={() => setDobFilter('all')}
+            className="h-7 text-xs rounded-full"
+          >
+            All Students ({studentProfiles.length})
+          </Button>
+          <Button
+            size="sm"
+            variant={dobFilter === 'pending' ? 'default' : 'outline'}
+            onClick={() => setDobFilter('pending')}
+            className={`h-7 text-xs rounded-full ${
+              dobPendingCount > 0 && dobFilter !== 'pending'
+                ? 'border-amber-500/50 text-amber-600 dark:text-amber-400'
+                : ''
+            }`}
+          >
+            DOB Pending ({dobPendingCount})
+          </Button>
+          <Button
+            size="sm"
+            variant={dobFilter === 'rejected' ? 'default' : 'outline'}
+            onClick={() => setDobFilter('rejected')}
+            className={`h-7 text-xs rounded-full ${
+              dobRejectedCount > 0 && dobFilter !== 'rejected'
+                ? 'border-destructive/50 text-destructive'
+                : ''
+            }`}
+          >
+            DOB Rejected ({dobRejectedCount})
+          </Button>
+          <Button
+            size="sm"
+            variant={dobFilter === 'verified' ? 'default' : 'outline'}
+            onClick={() => setDobFilter('verified')}
+            className="h-7 text-xs rounded-full"
+          >
+            Verified
+          </Button>
+        </div>
+      )}
 
       {/* Search Input */}
       <div className="relative mb-4">
@@ -130,6 +199,24 @@ export const StudentsSection = () => {
                     <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 shrink-0">
                       <Shield className="w-3 h-3 mr-1" />
                       Admin
+                    </Badge>
+                  )}
+                  {isAdminOrCr && p.date_of_birth && (
+                    <Badge
+                      variant={
+                        p.dob_status === 'verified'
+                          ? 'default'
+                          : p.dob_status === 'rejected'
+                          ? 'destructive'
+                          : 'secondary'
+                      }
+                      className="text-[10px] ml-auto shrink-0"
+                    >
+                      {p.dob_status === 'verified'
+                        ? 'Verified'
+                        : p.dob_status === 'rejected'
+                        ? 'DOB Rejected'
+                        : 'DOB Pending'}
                     </Badge>
                   )}
                 </div>

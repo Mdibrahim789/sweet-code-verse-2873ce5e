@@ -92,18 +92,25 @@ export const ProfileSection = () => {
     
     setSaving(true);
     try {
+      const updateData: any = {
+        name: formData.name,
+        student_id: formData.student_id || null,
+        diploma_session: formData.diploma_session || null,
+        phone: formData.phone || null,
+        blood_group: formData.blood_group || null,
+        email: formData.email || null,
+        address: formData.address || null,
+        date_of_birth: formData.date_of_birth || null
+      };
+
+      if (formData.date_of_birth !== profile.date_of_birth || profile.dob_status === 'rejected') {
+        updateData.dob_status = formData.date_of_birth ? 'pending' : null;
+        updateData.dob_rejection_reason = null;
+      }
+
       const { error } = await supabase
         .from('profiles')
-        .update({
-          name: formData.name,
-          student_id: formData.student_id || null,
-          diploma_session: formData.diploma_session || null,
-          phone: formData.phone || null,
-          blood_group: formData.blood_group || null,
-          email: formData.email || null,
-          address: formData.address || null,
-          date_of_birth: formData.date_of_birth || null
-        })
+        .update(updateData)
         .eq('id', profile.id);
 
       if (error) throw error;
@@ -245,7 +252,27 @@ export const ProfileSection = () => {
               <InfoItem 
                 icon={<Calendar className="w-4 h-4" />} 
                 label="Date of Birth" 
-                value={profile.date_of_birth ? format(new Date(profile.date_of_birth + 'T00:00:00'), 'dd MMM yyyy') : null} 
+                value={profile.date_of_birth ? format(new Date(profile.date_of_birth + 'T00:00:00'), 'dd MMM yyyy') : null}
+                badge={
+                  profile.date_of_birth ? (
+                    <Badge
+                      variant={
+                        profile.dob_status === 'verified'
+                          ? 'default'
+                          : profile.dob_status === 'rejected'
+                          ? 'destructive'
+                          : 'secondary'
+                      }
+                      className="text-[10px] uppercase font-semibold tracking-wider shrink-0"
+                    >
+                      {profile.dob_status === 'verified'
+                        ? 'Verified'
+                        : profile.dob_status === 'rejected'
+                        ? 'Rejected'
+                        : 'Pending Review'}
+                    </Badge>
+                  ) : undefined
+                }
               />
               <InfoItem 
                 icon={<Droplets className="w-4 h-4" />} 
@@ -299,10 +326,16 @@ export const ProfileSection = () => {
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <Label>Date of Birth</Label>
+                  <div className="flex items-center justify-between">
+                    <Label>Date of Birth</Label>
+                    {profile.dob_status === 'verified' && !isMaster() && (
+                      <span className="text-[10px] text-muted-foreground">Locked (Verified)</span>
+                    )}
+                  </div>
                   <Input
                     type="date"
                     value={formData.date_of_birth}
+                    disabled={profile.dob_status === 'verified' && !isMaster()}
                     onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
                   />
                 </div>
@@ -315,14 +348,14 @@ export const ProfileSection = () => {
                   />
                 </div>
               </div>
-                <div>
-                  <Label>Phone</Label>
-                  <Input
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+880 1234567890"
-                  />
-                </div>
+              <div>
+                <Label>Phone</Label>
+                <Input
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="+880 1234567890"
+                />
+              </div>
               <div>
                 <Label>Email</Label>
                 <Input
@@ -357,12 +390,25 @@ export const ProfileSection = () => {
   );
 };
 
-const InfoItem = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | null }) => (
-  <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-    <span className="text-primary mt-0.5">{icon}</span>
-    <div>
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="font-medium">{value || 'Not set'}</p>
+const InfoItem = ({
+  icon,
+  label,
+  value,
+  badge
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string | null;
+  badge?: React.ReactNode;
+}) => (
+  <div className="flex items-start justify-between p-3 rounded-lg bg-muted/50 gap-2">
+    <div className="flex items-start gap-3 min-w-0">
+      <span className="text-primary mt-0.5 shrink-0">{icon}</span>
+      <div className="min-w-0">
+        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className="font-medium truncate">{value || 'Not set'}</p>
+      </div>
     </div>
+    {badge}
   </div>
 );

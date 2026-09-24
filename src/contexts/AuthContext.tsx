@@ -21,6 +21,8 @@ interface Profile {
   email: string | null;
   address: string | null;
   date_of_birth: string | null;
+  dob_status?: 'pending' | 'verified' | 'rejected' | null;
+  dob_rejection_reason?: string | null;
 }
 
 interface AuthContextType {

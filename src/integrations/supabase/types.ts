@@ -593,6 +593,8 @@ export type Database = {
           created_at: string
           date_of_birth: string | null
           diploma_session: string | null
+          dob_rejection_reason: string | null
+          dob_status: string | null
           email: string | null
           id: string
           name: string
@@ -609,6 +611,8 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           diploma_session?: string | null
+          dob_rejection_reason?: string | null
+          dob_status?: string | null
           email?: string | null
           id?: string
           name: string
@@ -625,6 +629,8 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           diploma_session?: string | null
+          dob_rejection_reason?: string | null
+          dob_status?: string | null
           email?: string | null
           id?: string
           name?: string
