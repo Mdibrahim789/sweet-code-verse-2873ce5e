@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Camera, Mail, Phone, MapPin, Droplets, User, Upload } from 'lucide-react';
+import { Camera, Mail, Phone, MapPin, Droplets, User, Upload, Calendar } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
 
 interface Profile {
   id: string;
@@ -19,6 +20,7 @@ interface Profile {
   blood_group: string | null;
   email: string | null;
   address: string | null;
+  date_of_birth: string | null;
 }
 
 interface StudentDetailModalProps {
@@ -48,7 +50,8 @@ export const StudentDetailModal = ({
     phone: '',
     blood_group: '',
     email: '',
-    address: ''
+    address: '',
+    date_of_birth: ''
   });
 
   // Reset state when profile changes or modal closes
@@ -64,7 +67,8 @@ export const StudentDetailModal = ({
       phone: profile?.phone || '',
       blood_group: profile?.blood_group || '',
       email: profile?.email || '',
-      address: profile?.address || ''
+      address: profile?.address || '',
+      date_of_birth: profile?.date_of_birth || ''
     });
   }, [profile, open]);
 
@@ -86,7 +90,8 @@ export const StudentDetailModal = ({
           phone: formData.phone || null,
           blood_group: formData.blood_group || null,
           email: formData.email || null,
-          address: formData.address || null
+          address: formData.address || null,
+          date_of_birth: formData.date_of_birth || null
         })
         .eq('id', profile.id);
 
@@ -194,6 +199,11 @@ export const StudentDetailModal = ({
               </div>
 
               <div className="space-y-3 bg-muted/50 rounded-lg p-4">
+                <InfoRow 
+                  icon={<Calendar className="w-4 h-4" />} 
+                  label="Date of Birth" 
+                  value={profile.date_of_birth ? format(new Date(profile.date_of_birth + 'T00:00:00'), 'dd MMM yyyy') : null} 
+                />
                 <InfoRow icon={<Droplets className="w-4 h-4" />} label="Blood Group" value={profile.blood_group} />
                 <InfoRow icon={<Mail className="w-4 h-4" />} label="Email" value={profile.email} />
                 <InfoRow icon={<Phone className="w-4 h-4" />} label="Phone" value={profile.phone} />
@@ -234,6 +244,14 @@ export const StudentDetailModal = ({
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
+                  <Label>Date of Birth</Label>
+                  <Input
+                    type="date"
+                    value={formData.date_of_birth}
+                    onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                  />
+                </div>
+                <div>
                   <Label>Blood Group</Label>
                   <Input
                     placeholder="e.g. A+, B-, O+"
@@ -241,13 +259,13 @@ export const StudentDetailModal = ({
                     onChange={(e) => setFormData({ ...formData, blood_group: e.target.value })}
                   />
                 </div>
-                <div>
-                  <Label>Phone</Label>
-                  <Input
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  />
-                </div>
+              </div>
+              <div>
+                <Label>Phone</Label>
+                <Input
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                />
               </div>
               <div>
                 <Label>Email</Label>

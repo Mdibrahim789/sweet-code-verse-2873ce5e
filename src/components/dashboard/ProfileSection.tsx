@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { Camera, Mail, Phone, MapPin, Droplets, User, GraduationCap, IdCard, Crown, Shield, BookOpen } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Camera, Mail, Phone, MapPin, Droplets, User, GraduationCap, IdCard, Crown, Shield, BookOpen, Calendar } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { GuestRestrictedContent } from './GuestRestrictedContent';
 import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
 
 export const ProfileSection = () => {
   const { user, profile, isMaster, isCR, isTeacher, refreshProfile } = useAuth();
@@ -30,11 +31,12 @@ export const ProfileSection = () => {
     phone: profile?.phone || '',
     blood_group: profile?.blood_group || '',
     email: profile?.email || '',
-    address: profile?.address || ''
+    address: profile?.address || '',
+    date_of_birth: profile?.date_of_birth || ''
   });
 
   // Update form data when profile changes
-  useState(() => {
+  useEffect(() => {
     if (profile) {
       setFormData({
         name: profile.name || '',
@@ -43,10 +45,11 @@ export const ProfileSection = () => {
         phone: profile.phone || '',
         blood_group: profile.blood_group || '',
         email: profile.email || '',
-        address: profile.address || ''
+        address: profile.address || '',
+        date_of_birth: profile.date_of_birth || ''
       });
     }
-  });
+  }, [profile]);
 
   // Show guest restricted content if in guest mode or not logged in
   if (isGuestMode && !user) {
@@ -98,7 +101,8 @@ export const ProfileSection = () => {
           phone: formData.phone || null,
           blood_group: formData.blood_group || null,
           email: formData.email || null,
-          address: formData.address || null
+          address: formData.address || null,
+          date_of_birth: formData.date_of_birth || null
         })
         .eq('id', profile.id);
 
@@ -239,6 +243,11 @@ export const ProfileSection = () => {
                 value={profile.diploma_session} 
               />
               <InfoItem 
+                icon={<Calendar className="w-4 h-4" />} 
+                label="Date of Birth" 
+                value={profile.date_of_birth ? format(new Date(profile.date_of_birth + 'T00:00:00'), 'dd MMM yyyy') : null} 
+              />
+              <InfoItem 
                 icon={<Droplets className="w-4 h-4" />} 
                 label="Blood Group" 
                 value={profile.blood_group} 
@@ -290,6 +299,14 @@ export const ProfileSection = () => {
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
+                  <Label>Date of Birth</Label>
+                  <Input
+                    type="date"
+                    value={formData.date_of_birth}
+                    onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                  />
+                </div>
+                <div>
                   <Label>Blood Group</Label>
                   <Input
                     placeholder="e.g. A+, B-, O+"
@@ -297,6 +314,7 @@ export const ProfileSection = () => {
                     onChange={(e) => setFormData({ ...formData, blood_group: e.target.value })}
                   />
                 </div>
+              </div>
                 <div>
                   <Label>Phone</Label>
                   <Input
@@ -305,7 +323,6 @@ export const ProfileSection = () => {
                     placeholder="+880 1234567890"
                   />
                 </div>
-              </div>
               <div>
                 <Label>Email</Label>
                 <Input

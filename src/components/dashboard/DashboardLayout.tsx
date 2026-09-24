@@ -9,6 +9,7 @@ import { GuestRestrictedContent } from './GuestRestrictedContent';
 import { BottomTabBar } from './BottomTabBar';
 import { PWAInstallPrompt } from './PWAInstallPrompt';
 import { NotificationPrompt } from './NotificationPrompt';
+import { MandatoryDobModal } from './MandatoryDobModal';
 
 // Public paths accessible without login
 const PUBLIC_PATHS = ['/bus', '/about'];
@@ -30,11 +31,14 @@ const SECTION_TITLES: Record<string, string> = {
 };
 
 export const DashboardLayout = () => {
-  const { user } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const { isGuestMode, enterGuestMode, exitGuestMode } = useGuest();
   const location = useLocation();
   const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Require DOB for logged-in students whose date_of_birth is missing
+  const needsDob = Boolean(user && profile && !profile.date_of_birth);
 
   // Auto-enable guest mode for direct link access to public pages
   useEffect(() => {
@@ -86,6 +90,15 @@ export const DashboardLayout = () => {
 
       {/* Auth Modal - Always mounted at root level */}
       <AuthModal open={showAuthModal} onOpenChange={handleAuthModalChange} />
+
+      {/* Mandatory DOB Modal - Blocks navigation until DOB is provided */}
+      {needsDob && profile && (
+        <MandatoryDobModal
+          open={needsDob}
+          profile={profile}
+          onSuccess={refreshProfile}
+        />
+      )}
     </div>
   );
 };

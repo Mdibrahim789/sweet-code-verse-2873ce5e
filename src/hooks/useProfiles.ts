@@ -13,6 +13,7 @@ export interface Profile {
   blood_group: string | null;
   email: string | null;
   address: string | null;
+  date_of_birth: string | null;
   created_at: string;
   updated_at: string;
   role?: 'master' | 'cr' | 'student' | 'teacher';

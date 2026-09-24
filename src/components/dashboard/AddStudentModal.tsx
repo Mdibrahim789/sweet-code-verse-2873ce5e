@@ -22,7 +22,8 @@ export const AddStudentModal = ({ open, onOpenChange, onSuccess }: AddStudentMod
     phone: '',
     blood_group: '',
     email: '',
-    address: ''
+    address: '',
+    date_of_birth: ''
   });
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -45,7 +46,8 @@ export const AddStudentModal = ({ open, onOpenChange, onSuccess }: AddStudentMod
       phone: '',
       blood_group: '',
       email: '',
-      address: ''
+      address: '',
+      date_of_birth: ''
     });
     setAvatarFile(null);
     setAvatarPreview(null);
@@ -109,6 +111,14 @@ export const AddStudentModal = ({ open, onOpenChange, onSuccess }: AddStudentMod
             .update({ avatar_url: publicUrl })
             .eq('user_id', result.user_id);
         }
+      }
+
+      // If date_of_birth was entered, ensure profile is updated with it
+      if (result.user_id && formData.date_of_birth) {
+        await supabase
+          .from('profiles')
+          .update({ date_of_birth: formData.date_of_birth })
+          .eq('user_id', result.user_id);
       }
 
       toast.success(`Student "${formData.name}" added!`);
@@ -194,6 +204,14 @@ export const AddStudentModal = ({ open, onOpenChange, onSuccess }: AddStudentMod
 
           <div className="grid grid-cols-2 gap-3">
             <div>
+              <Label>Date of Birth</Label>
+              <Input
+                type="date"
+                value={formData.date_of_birth}
+                onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+              />
+            </div>
+            <div>
               <Label>Blood Group</Label>
               <Input
                 placeholder="e.g. A+, B-, O+"
@@ -201,14 +219,15 @@ export const AddStudentModal = ({ open, onOpenChange, onSuccess }: AddStudentMod
                 onChange={(e) => setFormData({ ...formData, blood_group: e.target.value })}
               />
             </div>
-            <div>
-              <Label>Phone</Label>
-              <Input
-                placeholder="Phone number"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              />
-            </div>
+          </div>
+
+          <div>
+            <Label>Phone</Label>
+            <Input
+              placeholder="Phone number"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            />
           </div>
 
           <div>

@@ -591,6 +591,7 @@ export type Database = {
           blood_group: string | null
           bus_pickup_location: string | null
           created_at: string
+          date_of_birth: string | null
           diploma_session: string | null
           email: string | null
           id: string
@@ -606,6 +607,7 @@ export type Database = {
           blood_group?: string | null
           bus_pickup_location?: string | null
           created_at?: string
+          date_of_birth?: string | null
           diploma_session?: string | null
           email?: string | null
           id?: string
@@ -621,6 +623,7 @@ export type Database = {
           blood_group?: string | null
           bus_pickup_location?: string | null
           created_at?: string
+          date_of_birth?: string | null
           diploma_session?: string | null
           email?: string | null
           id?: string
