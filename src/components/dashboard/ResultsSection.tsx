@@ -65,7 +65,7 @@ interface SemesterResult {
 }
 
 export const ResultsSection = () => {
-  const { user, profile, isMaster, isCR, hasPermission } = useAuth();
+  const { user, profile, loading: authLoading, isMaster, isCR, hasPermission } = useAuth();
   const { isGuestMode } = useGuest();
   const navigate = useNavigate();
 
@@ -94,29 +94,6 @@ export const ResultsSection = () => {
 
   // Modal state for viewing a specific student's detail
   const [inspectStudent, setInspectStudent] = useState<Profile | null>(null);
-
-  // Check guest / logged-out mode
-  if (isGuestMode && !user) {
-    return (
-      <GuestRestrictedContent
-        title="Academic Results"
-        onLoginClick={() => navigate('/')}
-      />
-    );
-  }
-
-  if (!user || !profile) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 space-y-4">
-        <GraduationCap className="w-16 h-16 text-muted-foreground animate-pulse" />
-        <h2 className="text-xl font-semibold">Please Log In</h2>
-        <p className="text-muted-foreground text-center text-sm">
-          You need to be logged in to view academic results
-        </p>
-        <Button onClick={() => navigate('/')}>Log In</Button>
-      </div>
-    );
-  }
 
   // Filtered students for 'All Students' view
   const filteredStudents = useMemo(() => {
@@ -233,7 +210,8 @@ export const ResultsSection = () => {
   };
 
   // Helper to render a student's full result view (reused for 'My Result' and the inspect modal)
-  const renderStudentResultDetails = (target: Profile, isModal = false) => {
+  const renderStudentResultDetails = (target: Profile | null | undefined, isModal = false) => {
+    if (!target) return null;
     const rawResults = (target as any)?.academic_results as SemesterResult[] | undefined;
     const lastSyncedAt = (target as any)?.results_last_synced as string | undefined;
     const userCgpa = (target as any)?.cgpa as number | undefined;
@@ -545,6 +523,66 @@ export const ResultsSection = () => {
       </div>
     );
   };
+
+  // 1. Loading state: while auth is initializing or profile is being fetched
+  if (authLoading || (user && !profile)) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-5">
+          <div className="space-y-2">
+            <div className="h-7 w-52 bg-muted/60 rounded-md" />
+            <div className="h-4 w-72 bg-muted/40 rounded-md" />
+          </div>
+          <div className="h-9 w-28 bg-muted/60 rounded-md" />
+        </div>
+
+        <Card className="border border-border/80 bg-card p-6 space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-muted/60" />
+            <div className="space-y-2 flex-1">
+              <div className="h-5 w-48 bg-muted/60 rounded" />
+              <div className="h-4 w-36 bg-muted/40 rounded" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-border/40">
+            <div className="h-14 rounded-lg bg-muted/40" />
+            <div className="h-14 rounded-lg bg-muted/40" />
+            <div className="h-14 rounded-lg bg-muted/40" />
+            <div className="h-14 rounded-lg bg-muted/40" />
+          </div>
+        </Card>
+
+        <Card className="border border-border/80 bg-card p-6 space-y-4">
+          <div className="h-6 w-44 bg-muted/60 rounded" />
+          <div className="h-32 w-full rounded-lg bg-muted/30" />
+        </Card>
+      </div>
+    );
+  }
+
+  // 2. Guest restricted view
+  if (isGuestMode && !user) {
+    return (
+      <GuestRestrictedContent
+        title="Academic Results"
+        onLoginClick={() => navigate('/')}
+      />
+    );
+  }
+
+  // 3. Not logged in view
+  if (!user || !profile) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 space-y-4">
+        <GraduationCap className="w-16 h-16 text-muted-foreground animate-pulse" />
+        <h2 className="text-xl font-semibold">Please Log In</h2>
+        <p className="text-muted-foreground text-center text-sm">
+          You need to be logged in to view academic results
+        </p>
+        <Button onClick={() => navigate('/')}>Log In</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

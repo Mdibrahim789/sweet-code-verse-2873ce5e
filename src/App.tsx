@@ -28,6 +28,7 @@ import { AdminSection } from "@/components/dashboard/AdminSection";
 import { ProfileSection } from "@/components/dashboard/ProfileSection";
 import { ToolsSection } from "@/components/dashboard/ToolsSection";
 import { ResultsSection } from "@/components/dashboard/ResultsSection";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
@@ -40,7 +41,8 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <Routes>
+              <ErrorBoundary>
+                <Routes>
                 {/* Landing page / entry point */}
                 <Route path="/" element={<Index />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
@@ -66,7 +68,8 @@ const App = () => (
                 {/* 404 */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-            </BrowserRouter>
+            </ErrorBoundary>
+          </BrowserRouter>
           </TooltipProvider>
         </GuestProvider>
       </AuthProvider>
